@@ -1,4 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NameDrop
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) and integrated with [GitHub Speckit](https://github.com/github/spec-kit) for spec-driven development.
+
+## Spec-Driven Development
+
+This project uses GitHub Speckit for specification-driven development. The development process follows these phases:
+
+1. **Constitution** - Project principles and standards (`.specify/memory/constitution.md`)
+2. **Specification** - Feature requirements and user scenarios
+3. **Planning** - Technical implementation strategy
+4. **Tasks** - Actionable development tasks
+5. **Implementation** - Code execution with AI assistance
+
+### Available Commands
+
+Use these slash commands in your AI assistant (Cursor):
+
+- `/constitution` - Establish or update project principles
+- `/specify` - Create feature specifications
+- `/plan` - Generate technical implementation plans
+- `/tasks` - Break down plans into actionable tasks
+- `/implement` - Execute implementation with AI assistance
+- `/clarify` - Ask structured questions to de-risk ambiguous areas
+- `/analyze` - Cross-artifact consistency and alignment report
+
+### Project Structure
+
+- `.specify/` - Speckit configuration and templates
+- `.cursor/` - Cursor-specific command definitions
+- `specs/` - Feature specifications (created as needed)
 
 ## Getting Started
 

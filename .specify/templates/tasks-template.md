@@ -1,147 +1,50 @@
-# Tasks: [FEATURE NAME]
+# Tasks Template
 
-**Input**: Design documents from `/specs/[###-feature-name]/`
-**Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
+## Feature: {FEATURE_NAME}
 
-## Execution Flow (main)
+### Setup Tasks
+- [ ] **T001**: Project initialization and dependency installation
+- [ ] **T002**: Environment configuration and secrets setup
+- [ ] **T003**: Linting and code quality tools configuration
+
+### Test Tasks [P]
+- [ ] **T004**: Contract test for {CONTRACT_NAME}
+- [ ] **T005**: Integration test for {INTEGRATION_SCENARIO}
+
+### Core Tasks
+- [ ] **T006**: Model creation for {ENTITY_NAME}
+- [ ] **T007**: Service implementation for {SERVICE_NAME}
+- [ ] **T008**: Endpoint implementation for {ENDPOINT_NAME}
+
+### Integration Tasks
+- [ ] **T009**: Database connection setup
+- [ ] **T010**: Middleware configuration
+- [ ] **T011**: Logging implementation
+
+### Polish Tasks [P]
+- [ ] **T012**: Unit tests for {COMPONENT_NAME}
+- [ ] **T013**: Performance optimization
+- [ ] **T014**: Documentation updates
+
+## Parallel Execution Examples
+
+### Group 1: Contract Tests [P]
+```bash
+# These can run in parallel
+Task agent: T004
+Task agent: T005
 ```
-1. Load plan.md from feature directory
-   → If not found: ERROR "No implementation plan found"
-   → Extract: tech stack, libraries, structure
-2. Load optional design documents:
-   → data-model.md: Extract entities → model tasks
-   → contracts/: Each file → contract test task
-   → research.md: Extract decisions → setup tasks
-3. Generate tasks by category:
-   → Setup: project init, dependencies, linting
-   → Tests: contract tests, integration tests
-   → Core: models, services, CLI commands
-   → Integration: DB, middleware, logging
-   → Polish: unit tests, performance, docs
-4. Apply task rules:
-   → Different files = mark [P] for parallel
-   → Same file = sequential (no [P])
-   → Tests before implementation (TDD)
-5. Number tasks sequentially (T001, T002...)
-6. Generate dependency graph
-7. Create parallel execution examples
-8. Validate task completeness:
-   → All contracts have tests?
-   → All entities have models?
-   → All endpoints implemented?
-9. Return: SUCCESS (tasks ready for execution)
+
+### Group 2: Model Creation [P]
+```bash
+# These can run in parallel
+Task agent: T006
+Task agent: T007
 ```
-
-## Format: `[ID] [P?] Description`
-- **[P]**: Can run in parallel (different files, no dependencies)
-- Include exact file paths in descriptions
-
-## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
-
-## Phase 3.1: Setup
-- [ ] T001 Create project structure per implementation plan
-- [ ] T002 Initialize [language] project with [framework] dependencies
-- [ ] T003 [P] Configure linting and formatting tools
-
-## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
-**CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-
-### Unit Tests (Vitest + Testing Library)
-- [ ] T004 [P] Unit test utility functions in tests/unit/test_utils.ts
-- [ ] T005 [P] Unit test validation schemas in tests/unit/test_validation.ts
-- [ ] T006 [P] Unit test React components in tests/unit/test_components.tsx
-
-### Integration Tests (Playwright)
-- [ ] T007 [P] Integration test API routes in tests/integration/test_api.ts
-- [ ] T008 [P] Integration test user flows in tests/integration/test_user_flows.ts
-- [ ] T009 [P] Integration test authentication in tests/integration/test_auth.ts
-
-### Contract Tests
-- [ ] T010 [P] Contract test POST /api/users in tests/contract/test_users_post.ts
-- [ ] T011 [P] Contract test GET /api/users/{id} in tests/contract/test_users_get.ts
-
-## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T008 [P] User model in src/models/user.py
-- [ ] T009 [P] UserService CRUD in src/services/user_service.py
-- [ ] T010 [P] CLI --create-user in src/cli/user_commands.py
-- [ ] T011 POST /api/users endpoint
-- [ ] T012 GET /api/users/{id} endpoint
-- [ ] T013 Input validation
-- [ ] T014 Error handling and logging
-
-## Phase 3.4: Integration
-- [ ] T015 Connect UserService to DB
-- [ ] T016 Auth middleware
-- [ ] T017 Request/response logging
-- [ ] T018 CORS and security headers
-
-## Phase 3.5: Deployment & Polish
-- [ ] T019 [P] Unit tests for validation in tests/unit/test_validation.ts
-- [ ] T020 Performance tests (<200ms response time)
-- [ ] T021 [P] Update docs/api.md
-- [ ] T022 Remove duplication and optimize code
-- [ ] T023 [P] Configure Docker multi-stage build
-- [ ] T024 [P] Set up health check endpoints
-- [ ] T025 [P] Configure environment variables
-- [ ] T026 [P] Update GitHub Actions workflow
-- [ ] T027 [P] Test deployment to staging environment
-- [ ] T028 Run manual-testing.md and deployment verification
 
 ## Dependencies
-- Tests (T004-T011) before implementation (T012-T018)
-- T012 blocks T013, T015
-- T016 blocks T018
-- Implementation before deployment & polish (T019-T028)
-- Docker configuration (T023) before deployment testing (T027)
-
-## Parallel Example
-```
-# Launch T004-T011 together (all tests can run in parallel):
-Task: "Unit test utility functions in tests/unit/test_utils.ts"
-Task: "Unit test validation schemas in tests/unit/test_validation.ts"
-Task: "Unit test React components in tests/unit/test_components.tsx"
-Task: "Integration test API routes in tests/integration/test_api.ts"
-Task: "Integration test user flows in tests/integration/test_user_flows.ts"
-Task: "Integration test authentication in tests/integration/test_auth.ts"
-Task: "Contract test POST /api/users in tests/contract/test_users_post.ts"
-Task: "Contract test GET /api/users/{id} in tests/contract/test_users_get.ts"
-```
-
-## Notes
-- [P] tasks = different files, no dependencies
-- Verify tests fail before implementing
-- Commit after each task
-- Avoid: vague tasks, same file conflicts
-
-## Task Generation Rules
-*Applied during main() execution*
-
-1. **From Contracts**:
-   - Each contract file → contract test task [P]
-   - Each endpoint → implementation task
-   
-2. **From Data Model**:
-   - Each entity → model creation task [P]
-   - Relationships → service layer tasks
-   
-3. **From User Stories**:
-   - Each story → integration test [P]
-   - Quickstart scenarios → validation tasks
-
-4. **Ordering**:
-   - Setup → Tests → Models → Services → Endpoints → Polish
-   - Dependencies block parallel execution
-
-## Validation Checklist
-*GATE: Checked by main() before returning*
-
-- [ ] All contracts have corresponding tests
-- [ ] All entities have model tasks
-- [ ] All tests come before implementation
-- [ ] Parallel tasks truly independent
-- [ ] Each task specifies exact file path
-- [ ] No task modifies same file as another [P] task
+- T001 → T002 → T003 (Setup sequence)
+- T004, T005 → T006, T007 (Tests before implementation)
+- T006 → T008 (Models before endpoints)
+- T008 → T009, T010, T011 (Core before integration)
+- T009, T010, T011 → T012, T013, T014 (Everything before polish)

@@ -48,31 +48,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=sha,prefix={{branch}}-
-            type=raw,value=latest,enable={{is_default_branch}}
-
-      - name: Build and push Docker image
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           platforms: linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: false
+          tags: namedrop:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -117,20 +99,12 @@ jobs:
           git fetch origin
           git reset --hard origin/main
           
-          # Login to GitHub Container Registry
-          echo "🔐 Logging in to GitHub Container Registry..."
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          
-          # Pull latest image
-          echo "🐳 Pulling latest Docker image..."
-          docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          
           # Stop existing containers
           echo "🛑 Stopping existing containers..."
           docker-compose down || true
           
-          # Start new containers
-          echo "🚀 Starting new containers..."
+          # Build and start new containers
+          echo "🚀 Building and starting new containers..."
           docker-compose up -d --build
           
           # Clean up old images
@@ -140,7 +114,7 @@ jobs:
           # Health check
           echo "🏥 Performing health check..."
           sleep 30
-          if curl -f http://localhost:3000/api/health; then
+          if curl -f http://localhost:3001/api/health; then
             echo "✅ Deployment successful! App is healthy."
           else
             echo "❌ Health check failed. Rolling back..."

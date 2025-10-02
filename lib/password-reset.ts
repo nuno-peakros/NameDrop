@@ -1,8 +1,7 @@
 import { db } from '@/lib/db'
 import { emailTemplates } from '@/lib/email'
 import { generateSecurePassword, hashPassword, verifyPassword } from '@/lib/auth-utils'
-// @ts-ignore - Prisma client types
-import { User } from '@prisma/client'
+// import { User } from '@prisma/client'
 
 /**
  * Password reset service for user password management
@@ -267,6 +266,7 @@ export async function resetPassword(token: string, newPassword: string): Promise
     const hashedPassword = await hashPassword(newPassword)
 
     // Update user password and mark token as used
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await db.$transaction(async (tx: any) => {
       // Update user password
       await tx.user.update({

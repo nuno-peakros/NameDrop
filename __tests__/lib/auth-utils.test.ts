@@ -97,7 +97,7 @@ describe('Auth Utils', () => {
     })
 
     it('should validate medium password', () => {
-      const password = 'MediumPass123'
+      const password = 'MediumPass1'
       const result = validatePasswordStrength(password)
       
       expect(result.isValid).toBe(true)

@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { AccessibilityTester, ColorContrast } from '@/lib/accessibility'
+import { AccessibilityTester as AccessibilityLib, ColorContrast } from '@/lib/accessibility'
 
 /**
  * Accessibility tester component
@@ -46,10 +46,10 @@ export function AccessibilityTester() {
   /**
    * Test accessibility of an element
    */
-  const testElement = (element: HTMLElement) => {
-    const results = AccessibilityTester.testElement(element)
-    setTestResults({ element, results })
-  }
+  // const testElement = (element: HTMLElement) => {
+  //   const results = AccessibilityLib.testElement(element)
+  //   setTestResults({ element, results })
+  // }
 
   /**
    * Test all elements in the test area
@@ -62,12 +62,12 @@ export function AccessibilityTester() {
     const elements = testAreaRef.current.querySelectorAll('*')
     const results: Array<{
       element: HTMLElement
-      results: ReturnType<typeof AccessibilityTester.testElement>
+      results: ReturnType<typeof AccessibilityLib.testElement>
     }> = []
     
     elements.forEach((element) => {
       if (element instanceof HTMLElement) {
-        const elementResults = AccessibilityTester.testElement(element)
+        const elementResults = AccessibilityLib.testElement(element)
         results.push({ element, results: elementResults })
       }
     })

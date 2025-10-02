@@ -141,7 +141,8 @@ export async function authenticateUser(credentials: LoginCredentials): Promise<A
     const needsPasswordChange = shouldChangePassword(user.passwordChangedAt)
 
     // Remove password hash from response
-    const { passwordHash, ...userWithoutPassword } = user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash: _passwordHash, ...userWithoutPassword } = user
 
     return {
       success: true,
@@ -330,7 +331,9 @@ export async function refreshSession(userId: string): Promise<AuthResult> {
  * }
  * ```
  */
-export async function logoutUser(userId: string): Promise<{ success: boolean; message: string }> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function logoutUser(_userId: string): Promise<{ success: boolean; message: string }> {
+  // _userId parameter is kept for future implementation (token blacklisting, session cleanup)
   try {
     // In a more sophisticated system, you might want to:
     // 1. Store invalidated tokens in a blacklist

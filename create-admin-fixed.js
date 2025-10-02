@@ -6,8 +6,11 @@
  * This script creates the demo admin user with explicit UUID generation.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const bcrypt = require('bcryptjs');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { randomUUID } = require('crypto');
 
 async function createAdminUser() {

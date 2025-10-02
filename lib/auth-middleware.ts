@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateToken } from '@/lib/jwt-utils';
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/db';
 
 /**
  * Authentication middleware utilities for API routes
@@ -131,7 +131,7 @@ export async function validateAuthentication(token: string): Promise<AuthResult>
     }
 
     // Verify user still exists and is active
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: validation.user.userId },
       select: {
         id: true,

@@ -6,7 +6,9 @@
  * This script creates the demo admin user using raw SQL.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const bcrypt = require('bcryptjs');
 
 async function createAdminUserRaw() {

@@ -105,7 +105,8 @@ const nextConfig: NextConfig = {
   },
   
   // Webpack configuration for bundle optimization
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  webpack: async (config, { buildId: _buildId, dev, isServer, defaultLoaders: _defaultLoaders, webpack: _webpack }) => {
     // Optimize bundle size
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
@@ -134,7 +135,7 @@ const nextConfig: NextConfig = {
     
     // Add bundle analyzer in development
     if (dev && process.env.ANALYZE === 'true') {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      const { BundleAnalyzerPlugin } = await import('webpack-bundle-analyzer');
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'server',

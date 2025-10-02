@@ -112,6 +112,7 @@ function UserSearch({
             onClick={clearSearch}
             disabled={disabled}
             aria-label="Clear search"
+            title="Clear search"
           >
             <X className="h-3 w-3" />
           </Button>
@@ -160,10 +161,10 @@ function SearchResultsSummary({
   return (
     <div className={cn("text-sm text-muted-foreground", className)}>
       {totalResults === 0 ? (
-        <span>No results found for "{searchTerm}"</span>
+        <span>No results found for &quot;{searchTerm}&quot;</span>
       ) : (
         <span>
-          {totalResults} result{totalResults !== 1 ? 's' : ''} found for "{searchTerm}"
+          {totalResults} result{totalResults !== 1 ? 's' : ''} found for &quot;{searchTerm}&quot;
         </span>
       )}
     </div>

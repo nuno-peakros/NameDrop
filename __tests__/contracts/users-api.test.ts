@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { User } from '@prisma/client'
+// import { User } from '@prisma/client'
 
 // Define UserRole enum locally for testing
 enum UserRole {
@@ -17,31 +17,31 @@ enum UserRole {
 
 describe('User Management API Contracts', () => {
   // Mock user data for testing
-  const mockUser: Omit<User, 'passwordHash'> = {
-    id: 'test-user-id',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    role: UserRole.user,
-    isActive: true,
-    emailVerified: true,
-    passwordChangedAt: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
+  // const mockUser: Omit<User, 'passwordHash'> = {
+  //   id: 'test-user-id',
+  //   firstName: 'John',
+  //   lastName: 'Doe',
+  //   email: 'john.doe@example.com',
+  //   role: UserRole.user,
+  //   isActive: true,
+  //   emailVerified: true,
+  //   passwordChangedAt: new Date(),
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  // }
 
-  const mockAdmin: Omit<User, 'passwordHash'> = {
-    id: 'test-admin-id',
-    firstName: 'Admin',
-    lastName: 'User',
-    email: 'admin@example.com',
-    role: UserRole.admin,
-    isActive: true,
-    emailVerified: true,
-    passwordChangedAt: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
+  // const mockAdmin: Omit<User, 'passwordHash'> = {
+  //   id: 'test-admin-id',
+  //   firstName: 'Admin',
+  //   lastName: 'User',
+  //   email: 'admin@example.com',
+  //   role: UserRole.admin,
+  //   isActive: true,
+  //   emailVerified: true,
+  //   passwordChangedAt: new Date(),
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  // }
 
   beforeEach(() => {
     // Setup test environment
@@ -244,7 +244,7 @@ describe('User Management API Contracts', () => {
 
   describe('DELETE /api/users/[id]', () => {
     it('should return success response for deactivating user', async () => {
-      const userId = 'test-user-id'
+      // const userId = 'test-user-id'
 
       const expectedResponse = {
         success: true,
@@ -258,7 +258,7 @@ describe('User Management API Contracts', () => {
 
   describe('POST /api/users/[id]/reactivate', () => {
     it('should return success response for reactivating user', async () => {
-      const userId = 'test-user-id'
+      // const userId = 'test-user-id'
 
       const expectedResponse = {
         success: true,
@@ -272,7 +272,7 @@ describe('User Management API Contracts', () => {
 
   describe('POST /api/users/[id]/resend-verification', () => {
     it('should return success response for resending verification', async () => {
-      const userId = 'test-user-id'
+      // const userId = 'test-user-id'
 
       const expectedResponse = {
         success: true,
@@ -286,7 +286,7 @@ describe('User Management API Contracts', () => {
 
   describe('POST /api/users/[id]/reset-password', () => {
     it('should return success response for admin resetting password', async () => {
-      const userId = 'test-user-id'
+      // const userId = 'test-user-id'
 
       const expectedResponse = {
         success: true,

@@ -26,7 +26,7 @@
  * ```
  */
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { logger } from './logger';
 
 /**
@@ -65,7 +65,7 @@ export interface BaseError {
   statusCode: number;
   severity: ErrorSeverity;
   category: ErrorCategory;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   timestamp: string;
   requestId?: string;
   userId?: string;
@@ -77,12 +77,12 @@ export interface BaseError {
  * Custom application error class
  */
 export class AppError extends Error implements BaseError {
-  public readonly name: string;
+  public readonly name: string = 'AppError';
   public readonly code: string;
   public readonly statusCode: number;
   public readonly severity: ErrorSeverity;
   public readonly category: ErrorCategory;
-  public readonly context?: Record<string, any>;
+  public readonly context?: Record<string, unknown>;
   public readonly timestamp: string;
   public readonly requestId?: string;
   public readonly userId?: string;
@@ -94,13 +94,13 @@ export class AppError extends Error implements BaseError {
     statusCode: number = 500,
     severity: ErrorSeverity = ErrorSeverity.MEDIUM,
     category: ErrorCategory = ErrorCategory.INTERNAL,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
     super(message);
     
-    this.name = 'AppError';
+    // this.name = 'AppError'; // Read-only property
     this.code = code;
     this.statusCode = statusCode;
     this.severity = severity;
@@ -149,7 +149,7 @@ export class AppError extends Error implements BaseError {
 export class ValidationError extends AppError {
   constructor(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -163,7 +163,14 @@ export class ValidationError extends AppError {
       requestId,
       userId
     );
-    this.name = 'ValidationError';
+    // Fix: Set the correct error name and prototype chain
+    Object.defineProperty(this, 'name', {
+      value: 'ValidationError',
+      configurable: true,
+      enumerable: false,
+      writable: true,
+    });
+    Object.setPrototypeOf(this, ValidationError.prototype);
   }
 }
 
@@ -173,7 +180,7 @@ export class ValidationError extends AppError {
 export class AuthenticationError extends AppError {
   constructor(
     message: string = 'Authentication failed',
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -187,7 +194,6 @@ export class AuthenticationError extends AppError {
       requestId,
       userId
     );
-    this.name = 'AuthenticationError';
   }
 }
 
@@ -197,7 +203,7 @@ export class AuthenticationError extends AppError {
 export class AuthorizationError extends AppError {
   constructor(
     message: string = 'Insufficient permissions',
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -211,7 +217,7 @@ export class AuthorizationError extends AppError {
       requestId,
       userId
     );
-    this.name = 'AuthorizationError';
+    // this.name = 'AuthorizationError'; // Read-only property
   }
 }
 
@@ -221,7 +227,7 @@ export class AuthorizationError extends AppError {
 export class NotFoundError extends AppError {
   constructor(
     resource: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -235,7 +241,7 @@ export class NotFoundError extends AppError {
       requestId,
       userId
     );
-    this.name = 'NotFoundError';
+    // this.name = 'NotFoundError'; // Read-only property
   }
 }
 
@@ -245,7 +251,7 @@ export class NotFoundError extends AppError {
 export class ConflictError extends AppError {
   constructor(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -259,7 +265,7 @@ export class ConflictError extends AppError {
       requestId,
       userId
     );
-    this.name = 'ConflictError';
+    // this.name = 'ConflictError'; // Read-only property
   }
 }
 
@@ -270,7 +276,7 @@ export class RateLimitError extends AppError {
   constructor(
     message: string = 'Rate limit exceeded',
     retryAfter?: number,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -284,7 +290,7 @@ export class RateLimitError extends AppError {
       requestId,
       userId
     );
-    this.name = 'RateLimitError';
+    // this.name = 'RateLimitError'; // Read-only property
   }
 }
 
@@ -295,7 +301,7 @@ export class ExternalServiceError extends AppError {
   constructor(
     service: string,
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -309,7 +315,7 @@ export class ExternalServiceError extends AppError {
       requestId,
       userId
     );
-    this.name = 'ExternalServiceError';
+    // this.name = 'ExternalServiceError'; // Read-only property
   }
 }
 
@@ -319,7 +325,7 @@ export class ExternalServiceError extends AppError {
 export class DatabaseError extends AppError {
   constructor(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -333,7 +339,7 @@ export class DatabaseError extends AppError {
       requestId,
       userId
     );
-    this.name = 'DatabaseError';
+    // this.name = 'DatabaseError'; // Read-only property
   }
 }
 
@@ -343,7 +349,7 @@ export class DatabaseError extends AppError {
 export class NetworkError extends AppError {
   constructor(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ) {
@@ -357,7 +363,7 @@ export class NetworkError extends AppError {
       requestId,
       userId
     );
-    this.name = 'NetworkError';
+    // this.name = 'NetworkError'; // Read-only property
   }
 }
 
@@ -518,7 +524,16 @@ export class ErrorHandler {
    * @returns NextResponse with error details
    */
   private createErrorResponse(error: AppError): NextResponse {
-    const response: any = {
+    const response: {
+      success: false;
+      error: {
+        code: string;
+        message: string;
+        details?: Record<string, unknown>;
+        stack?: string;
+        context?: Record<string, unknown>;
+      };
+    } = {
       success: false,
       error: {
         code: error.code,
@@ -597,7 +612,7 @@ export const errorHandler = new ErrorHandler();
  * });
  * ```
  */
-export function withErrorHandling<T extends any[], R>(
+export function withErrorHandling<T extends unknown[]>(
   handler: (...args: T) => Promise<NextResponse>
 ) {
   return async (...args: T): Promise<NextResponse> => {
@@ -605,11 +620,11 @@ export function withErrorHandling<T extends any[], R>(
       return await handler(...args);
     } catch (error) {
       // Extract request info if available
-      const request = args.find(arg => arg && typeof arg === 'object' && 'nextUrl' in arg);
+      const request = args.find(arg => arg && typeof arg === 'object' && 'nextUrl' in arg) as NextRequest | undefined;
       const requestId = request?.headers?.get('x-request-id');
       const userId = request?.headers?.get('x-user-id');
       
-      return errorHandler.handle(error, requestId, userId);
+      return errorHandler.handle(error, requestId || undefined, userId || undefined);
     }
   };
 }
@@ -631,55 +646,55 @@ export const createErrors = {
   /**
    * Create validation error
    */
-  validation: (message: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  validation: (message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new ValidationError(message, context, requestId, userId),
 
   /**
    * Create authentication error
    */
-  authentication: (message?: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  authentication: (message?: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new AuthenticationError(message, context, requestId, userId),
 
   /**
    * Create authorization error
    */
-  authorization: (message?: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  authorization: (message?: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new AuthorizationError(message, context, requestId, userId),
 
   /**
    * Create not found error
    */
-  notFound: (resource: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  notFound: (resource: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new NotFoundError(resource, context, requestId, userId),
 
   /**
    * Create conflict error
    */
-  conflict: (message: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  conflict: (message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new ConflictError(message, context, requestId, userId),
 
   /**
    * Create rate limit error
    */
-  rateLimit: (message?: string, retryAfter?: number, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  rateLimit: (message?: string, retryAfter?: number, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new RateLimitError(message, retryAfter, context, requestId, userId),
 
   /**
    * Create external service error
    */
-  externalService: (service: string, message: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  externalService: (service: string, message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new ExternalServiceError(service, message, context, requestId, userId),
 
   /**
    * Create database error
    */
-  database: (message: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  database: (message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new DatabaseError(message, context, requestId, userId),
 
   /**
    * Create network error
    */
-  network: (message: string, context?: Record<string, any>, requestId?: string, userId?: string) =>
+  network: (message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) =>
     new NetworkError(message, context, requestId, userId),
 };
 

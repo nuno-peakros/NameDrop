@@ -6,6 +6,7 @@
  * This script creates the database schema step by step.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
 
 async function createSchema() {

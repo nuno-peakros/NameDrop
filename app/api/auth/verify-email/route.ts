@@ -47,13 +47,16 @@ export async function POST(request: NextRequest) {
     const verifyResult = await verifyEmail(token)
 
     if (!verifyResult.success) {
-      const statusCode = verifyResult.error === 'INVALID_TOKEN' ? 400 : 500
+      const isClientError = verifyResult.message === 'Invalid verification token' ||
+                           verifyResult.message === 'Verification token has expired' ||
+                           verifyResult.message === 'Verification token has already been used'
+      const statusCode = isClientError ? 400 : 500
       
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: verifyResult.error || 'VERIFICATION_FAILED',
+            code: isClientError ? 'INVALID_TOKEN' : 'VERIFICATION_FAILED',
             message: verifyResult.message,
           },
         },

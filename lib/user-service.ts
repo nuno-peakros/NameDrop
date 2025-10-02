@@ -71,7 +71,7 @@ export interface PaginatedUsers {
 /**
  * User service result
  */
-export interface UserServiceResult<T = any> {
+export interface UserServiceResult<T = unknown> {
   success: boolean
   data?: T
   message: string
@@ -495,7 +495,7 @@ export async function searchUsers(filters: UserSearchFilters, pagination: Pagina
     const skip = (page - 1) * limit
 
     // Build where clause
-    const where: any = {}
+    const where: Record<string, unknown> = {}
 
     if (filters.search) {
       where.OR = [

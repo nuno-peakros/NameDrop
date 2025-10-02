@@ -1,8 +1,9 @@
 'use client'
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 /**
  * NameDrop Internal Landing Page
@@ -17,7 +18,7 @@ export default function Home() {
         <Card>
           <CardHeader className="text-center space-y-4">
             <div className="flex justify-center mb-4">
-              <img
+              <Image
                 src="/logo.svg"
                 alt="NameDrop Logo"
                 width={300}

@@ -1,0 +1,90 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img "NameDrop Logo" [ref=e7]
+          - navigation [ref=e8]:
+            - button "Dashboard" [ref=e9]
+            - button "Users" [ref=e10]
+            - button "Analytics" [ref=e11]
+            - button "Settings" [ref=e12]
+        - button "D Demo Administrator admin@namedrop.com" [ref=e14]:
+          - generic [ref=e16]: D
+          - generic [ref=e17]:
+            - paragraph [ref=e18]: Demo Administrator
+            - paragraph [ref=e19]: admin@namedrop.com
+          - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - heading "Performance Monitor" [level=1] [ref=e24]
+            - paragraph [ref=e25]: Monitor and analyze application performance metrics
+          - generic [ref=e26]: Real-time
+        - generic [ref=e27]:
+          - generic [ref=e29]:
+            - generic [ref=e32]: Core Web Vitals
+            - generic [ref=e33]:
+              - generic [ref=e35]: Bundle Size
+              - generic [ref=e36]:
+                - generic [ref=e37]:
+                  - generic [ref=e38]: JavaScript
+                  - generic [ref=e39]: 0 B
+                - generic [ref=e40]:
+                  - generic [ref=e41]: CSS
+                  - generic [ref=e42]: 0 B
+                - generic [ref=e43]:
+                  - generic [ref=e44]: Total
+                  - generic [ref=e45]: 0 B
+            - generic [ref=e46]:
+              - generic [ref=e48]: Performance Score
+              - generic [ref=e50]:
+                - generic [ref=e51]: N/A
+                - paragraph [ref=e52]: Based on Core Web Vitals
+                - button "Refresh Metrics" [ref=e53]
+          - generic [ref=e54]:
+            - generic [ref=e56]: Performance Tips
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - heading "Optimize Images" [level=4] [ref=e59]
+                - paragraph [ref=e60]: Use WebP/AVIF formats and proper sizing to reduce image load times.
+              - generic [ref=e61]:
+                - heading "Code Splitting" [level=4] [ref=e62]
+                - paragraph [ref=e63]: Implement dynamic imports to reduce initial bundle size.
+              - generic [ref=e64]:
+                - heading "Caching" [level=4] [ref=e65]
+                - paragraph [ref=e66]: Leverage browser caching and CDN for static assets.
+              - generic [ref=e67]:
+                - heading "Lazy Loading" [level=4] [ref=e68]
+                - paragraph [ref=e69]: Load components and images only when needed.
+          - generic [ref=e70]:
+            - generic [ref=e72]: Performance Standards
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e75]:
+                  - generic [ref=e76]: FCP
+                  - generic [ref=e77]: ≤ 1.8s
+                - paragraph [ref=e78]: First Contentful Paint
+              - generic [ref=e79]:
+                - generic [ref=e80]:
+                  - generic [ref=e81]: LCP
+                  - generic [ref=e82]: ≤ 2.5s
+                - paragraph [ref=e83]: Largest Contentful Paint
+              - generic [ref=e84]:
+                - generic [ref=e85]:
+                  - generic [ref=e86]: FID
+                  - generic [ref=e87]: ≤ 100ms
+                - paragraph [ref=e88]: First Input Delay
+              - generic [ref=e89]:
+                - generic [ref=e90]:
+                  - generic [ref=e91]: CLS
+                  - generic [ref=e92]: ≤ 0.1
+                - paragraph [ref=e93]: Cumulative Layout Shift
+  - button "Open Next.js Dev Tools" [ref=e99] [cursor=pointer]:
+    - img [ref=e100] [cursor=pointer]
+  - alert [ref=e104]
+```

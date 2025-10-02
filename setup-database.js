@@ -7,7 +7,9 @@
  * using raw SQL commands.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const bcrypt = require('bcryptjs');
 
 async function setupDatabase() {

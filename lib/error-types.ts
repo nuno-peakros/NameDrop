@@ -466,7 +466,7 @@ export function getErrorStatusCode(code: string): number {
  * @returns True if error is retryable
  */
 export function isRetryableError(code: string): boolean {
-  return RETRYABLE_ERROR_CODES.includes(code as any);
+  return (RETRYABLE_ERROR_CODES as readonly string[]).includes(code);
 }
 
 /**

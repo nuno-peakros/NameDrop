@@ -1,0 +1,97 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img "NameDrop Logo" [ref=e7]
+          - navigation [ref=e8]:
+            - button "Dashboard" [ref=e9]
+            - button "Users" [ref=e10]
+            - button "Analytics" [ref=e11]
+            - button "Settings" [ref=e12]
+        - button "D Demo Administrator admin@namedrop.com" [ref=e14]:
+          - generic [ref=e16]: D
+          - generic [ref=e17]:
+            - paragraph [ref=e18]: Demo Administrator
+            - paragraph [ref=e19]: admin@namedrop.com
+          - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - heading "Welcome back" [level=1] [ref=e23]
+          - paragraph [ref=e24]: Here's what's happening with your NameDrop system today
+        - generic [ref=e25]:
+          - generic [ref=e26]:
+            - generic [ref=e27]:
+              - generic [ref=e28]: Total Users
+              - img [ref=e29]
+            - generic [ref=e34]:
+              - generic [ref=e35]: "1"
+              - paragraph [ref=e36]: +1 from last month
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - generic [ref=e39]: Active Sessions
+              - img [ref=e40]
+            - generic [ref=e42]:
+              - generic [ref=e43]: "1"
+              - paragraph [ref=e44]: Currently online
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - generic [ref=e47]: Security Status
+              - img [ref=e48]
+            - generic [ref=e50]:
+              - generic [ref=e51]: Secure
+              - paragraph [ref=e52]: All systems operational
+          - generic [ref=e53]:
+            - generic [ref=e54]:
+              - generic [ref=e55]: Performance
+              - img [ref=e56]
+            - generic [ref=e58]:
+              - generic [ref=e59]: 98%
+              - paragraph [ref=e60]: System uptime
+        - generic [ref=e61]:
+          - generic [ref=e62]:
+            - generic [ref=e63]:
+              - generic [ref=e64]:
+                - img [ref=e65]
+                - text: User Management
+              - generic [ref=e70]: Manage user accounts, roles, and permissions
+            - button "Manage Users" [ref=e72]:
+              - img
+              - text: Manage Users
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - img [ref=e76]
+                - text: Security Monitoring
+              - generic [ref=e78]: Monitor security events and system health
+            - button "View Security" [ref=e80]:
+              - img
+              - text: View Security
+          - generic [ref=e81]:
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - img [ref=e84]
+                - text: Performance Analytics
+              - generic [ref=e86]: View system performance metrics and reports
+            - button "View Analytics" [ref=e88]:
+              - img
+              - text: View Analytics
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - generic [ref=e91]: Recent Activity
+            - generic [ref=e92]: Latest system events and user actions
+          - generic [ref=e94]:
+            - generic [ref=e97]:
+              - paragraph [ref=e98]: Admin user logged in
+              - paragraph [ref=e99]: Demo Administrator - Just now
+            - generic [ref=e102]:
+              - paragraph [ref=e103]: System initialized
+              - paragraph [ref=e104]: Database connected - 2 minutes ago
+  - button "Open Next.js Dev Tools" [ref=e110] [cursor=pointer]:
+    - img [ref=e111] [cursor=pointer]
+  - alert [ref=e114]
+```

@@ -5,9 +5,9 @@ import { cn } from '@/lib/utils'
 import { 
   FocusManager, 
   ScreenReader, 
-  KeyboardNavigation, 
+  // KeyboardNavigation, 
   generateAriaId,
-  getAccessibleName 
+  // getAccessibleName 
 } from '@/lib/accessibility'
 
 /**

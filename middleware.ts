@@ -50,18 +50,18 @@ function isProtectedRoute(pathname: string): boolean {
  * @param pathname - Request pathname
  * @returns True if path is public (no auth required)
  */
-function isPublicRoute(pathname: string): boolean {
-  const publicRoutes = [
-    '/api/health',
-    '/api/auth/login',
-    '/api/auth/register',
-    '/api/auth/verify-email',
-    '/api/auth/forgot-password',
-    '/api/auth/reset-password',
-  ]
-  
-  return publicRoutes.some(route => pathname.startsWith(route))
-}
+// function isPublicRoute(pathname: string): boolean {
+//   const publicRoutes = [
+//     '/api/health',
+//     '/api/auth/login',
+//     '/api/auth/register',
+//     '/api/auth/verify-email',
+//     '/api/auth/forgot-password',
+//     '/api/auth/reset-password',
+//   ]
+//   
+//   return publicRoutes.some(route => pathname.startsWith(route))
+// }
 
 /**
  * Get rate limit configuration for a path

@@ -30,7 +30,9 @@
  * ```
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { execSync } = require('child_process');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const path = require('path');
 
 // Parse command line arguments
@@ -66,7 +68,8 @@ function checkDatabaseConnection() {
   try {
     runCommand('npx prisma db pull --schema-only', 'Database connection test');
     console.log('✅ Database connection successful');
-  } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (_error) {
     console.error('❌ Database connection failed');
     console.error('Please check your DATABASE_URL environment variable');
     process.exit(1);

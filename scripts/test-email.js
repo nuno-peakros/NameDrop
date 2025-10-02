@@ -5,6 +5,7 @@
  * is properly configured and working.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { emailTemplates } = require('../lib/email.ts')
 
 async function testEmailService() {

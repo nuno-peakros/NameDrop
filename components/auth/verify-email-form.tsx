@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -187,7 +188,7 @@ function VerifyEmailForm({ onSuccess, redirectTo = '/dashboard', className }: Ve
     <Card className={className}>
       <CardHeader className="space-y-2 text-center">
         <div className="flex justify-center mb-4">
-          <img 
+          <Image 
             src="/logo.svg" 
             alt="NameDrop Logo" 
             width={40} 
@@ -245,7 +246,7 @@ function VerifyEmailForm({ onSuccess, redirectTo = '/dashboard', className }: Ve
         <div className="mt-6 space-y-4">
           <div className="text-center text-sm">
             <p className="text-muted-foreground">
-              Didn't receive the email?{' '}
+              Didn&apos;t receive the email?{' '}
               <Button 
                 variant="link" 
                 className="p-0 h-auto font-normal"
@@ -259,7 +260,7 @@ function VerifyEmailForm({ onSuccess, redirectTo = '/dashboard', className }: Ve
 
           <div className="text-center text-sm">
             <p className="text-muted-foreground">
-              Check your spam folder if you don't see the email
+              Check your spam folder if you don&apos;t see the email
             </p>
           </div>
         </div>

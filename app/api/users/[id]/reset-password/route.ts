@@ -24,7 +24,7 @@ import { applyRateLimit } from '@/lib/rate-limit'
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get authorization header
@@ -85,7 +85,8 @@ export async function POST(
     }
 
     // Validate path parameters
-    const pathValidation = validatePathParams(userSchemas.userId, params)
+    const resolvedParams = await params
+    const pathValidation = validatePathParams(userSchemas.userId, resolvedParams)
     if (!pathValidation.success) {
       return createValidationErrorResponse(pathValidation.errors)
     }

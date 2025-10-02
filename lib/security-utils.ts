@@ -93,25 +93,43 @@ export class InputSanitizer {
   }
 
   /**
-   * Sanitize URL to prevent open redirects
-   */
-  static sanitizeURL(url: string, allowedOrigins: string[] = SECURITY_CONFIG.ALLOWED_ORIGINS): string | null {
-    if (typeof url !== 'string') return null
-    
-    try {
-      const parsedURL = new URL(url)
-      
-      // Check if URL is from allowed origins
-      const isAllowed = allowedOrigins.some(origin => 
-        parsedURL.origin === origin || parsedURL.hostname === origin
-      )
-      
-      if (!isAllowed) return null
-      
-      return parsedURL.toString()
-    } catch {
-      return null
-    }
+   /**
+    * Sanitize URL to prevent open redirects
+    */
+   static sanitizeURL(
+     url: string,
+     allowedOrigins: readonly string[] = SECURITY_CONFIG.ALLOWED_ORIGINS
+   ): string | null {
+     if (typeof url !== 'string' || !url.trim()) return null
+
+     let parsedURL: URL
+     try {
+       // If the URL is relative, treat it as relative to a dummy origin
+       if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url)) {
+         parsedURL = new URL(url)
+       } else {
+         // Use a dummy origin for relative URLs
+         parsedURL = new URL(url, 'http://dummy.local')
+       }
+     } catch {
+       return null
+     }
+
+     // If the URL is relative (no protocol/host), allow it
+     if (!parsedURL.host || parsedURL.origin === 'http://dummy.local') {
+       // Prevent path traversal
+       if (parsedURL.pathname.includes('..')) return null
+       return parsedURL.pathname + parsedURL.search + parsedURL.hash
+     }
+
+     // Check if URL is from allowed origins
+     const isAllowed = allowedOrigins.some(origin =>
+       parsedURL.origin === origin || parsedURL.hostname === origin
+     )
+
+     if (!isAllowed) return null
+
+     return parsedURL.toString()
   }
 }
 
@@ -140,7 +158,7 @@ export class XSSPrevention {
   /**
    * Validate and sanitize JSON input
    */
-  static sanitizeJSON(input: string): any {
+  static sanitizeJSON(input: string): unknown {
     try {
       const parsed = JSON.parse(input)
       return this.recursivelySanitize(parsed)
@@ -152,7 +170,7 @@ export class XSSPrevention {
   /**
    * Recursively sanitize object properties
    */
-  private static recursivelySanitize(obj: any): any {
+  private static recursivelySanitize(obj: unknown): unknown {
     if (typeof obj === 'string') {
       return this.escapeHTML(obj)
     }
@@ -162,7 +180,7 @@ export class XSSPrevention {
     }
     
     if (obj && typeof obj === 'object') {
-      const sanitized: any = {}
+      const sanitized: Record<string, unknown> = {}
       for (const [key, value] of Object.entries(obj)) {
         const sanitizedKey = this.escapeHTML(key)
         const sanitizedValue = this.recursivelySanitize(value)
@@ -213,6 +231,7 @@ export class CSRFProtection {
    */
   static verifyToken(token: string, sessionToken: string): boolean {
     if (!token || !sessionToken) return false
+    if (token.length !== sessionToken.length) return false
     return crypto.timingSafeEqual(Buffer.from(token), Buffer.from(sessionToken))
   }
 
@@ -327,9 +346,9 @@ export class SecurityHeaders {
   /**
    * Get CORS headers
    */
-  static getCORSHeaders(allowedOrigins: string[] = SECURITY_CONFIG.ALLOWED_ORIGINS): Record<string, string> {
+  static getCORSHeaders(allowedOrigins: readonly string[] = SECURITY_CONFIG.ALLOWED_ORIGINS): Record<string, string> {
     return {
-      'Access-Control-Allow-Origin': allowedOrigins.join(', '),
+      'Access-Control-Allow-Origin': Array.from(allowedOrigins).join(', '),
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token',
       'Access-Control-Allow-Credentials': 'true',
@@ -412,7 +431,7 @@ export class PasswordSecurity {
     }
     
     if (SECURITY_CONFIG.PASSWORD_REQUIRE_SYMBOLS) {
-      password += '!@#$%^&*()_+-=[]{}|;:,.<>?'[Math.floor(Math.random() * 32)]
+      password += '!@#$%^&*()_+-=[]{}|;:,.<>?'[Math.floor(Math.random() * 26)]
     }
     
     // Fill remaining length with random characters
@@ -420,8 +439,13 @@ export class PasswordSecurity {
       password += charset[Math.floor(Math.random() * charset.length)]
     }
     
-    // Shuffle the password
-    return password.split('').sort(() => Math.random() - 0.5).join('')
+    // Shuffle the password using Fisher-Yates algorithm
+    const chars = password.split('')
+    for (let i = chars.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1))
+      ;[chars[i], chars[j]] = [chars[j], chars[i]]
+    }
+    return chars.join('')
   }
 }
 
@@ -469,7 +493,8 @@ export class FileSecurity {
    * Validate file type
    */
   static validateFileType(mimeType: string): boolean {
-    return SECURITY_CONFIG.ALLOWED_FILE_TYPES.includes(mimeType)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return SECURITY_CONFIG.ALLOWED_FILE_TYPES.includes(mimeType as any)
   }
 
   /**

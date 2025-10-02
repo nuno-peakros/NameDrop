@@ -4,7 +4,8 @@ import * as React from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useRouter } from 'next/navigation'
+import Image from 'next/image'
+// import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -42,7 +43,7 @@ type LoginFormData = z.infer<typeof loginSchema>
  */
 interface LoginFormProps {
   /** Callback when login is successful */
-  onSuccess?: (user: any) => void
+  onSuccess?: (user: { id: string; email: string; firstName: string; lastName: string }) => void
   /** URL to redirect to after successful login */
   redirectTo?: string
   /** Additional CSS classes */
@@ -50,7 +51,7 @@ interface LoginFormProps {
 }
 
 function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFormProps) {
-  const router = useRouter()
+  // const router = useRouter()
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -58,7 +59,6 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
     register,
     handleSubmit,
     formState: { errors },
-    setError: setFormError,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   })
@@ -114,7 +114,7 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
     <Card className={className}>
       <CardHeader className="space-y-2 text-center">
         <div className="flex justify-center mb-4">
-          <img
+          <Image
             src="/logo.svg"
             alt="NameDrop Logo"
             width={300}
@@ -188,7 +188,7 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
 
         <div className="mt-6 text-center text-sm">
           <p className="text-muted-foreground">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Button variant="link" className="p-0 h-auto font-normal">
               Contact administrator
             </Button>

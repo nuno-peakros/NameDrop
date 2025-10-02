@@ -10,9 +10,9 @@ import {
   UserX, 
   Mail, 
   Shield,
-  Calendar,
+  // Calendar,
   CheckCircle,
-  XCircle,
+  // XCircle,
   AlertCircle
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -37,8 +37,8 @@ import {
 import { LoadingSpinner, LoadingSkeleton } from '@/components/ui/loading'
 import { ErrorDisplay } from '@/components/ui/error-boundary'
 import { UserSearch, SearchResultsSummary } from '@/components/dashboard/user-search'
-import { UserFilters, QuickFilters } from '@/components/dashboard/user-filters'
-import { cn } from '@/lib/utils'
+import { UserFilters } from '@/components/dashboard/user-filters'
+// import { cn } from '@/lib/utils'
 
 /**
  * User interface
@@ -97,7 +97,7 @@ function UserManagement({ className }: UserManagementProps) {
     data: usersData, 
     isLoading, 
     error, 
-    refetch 
+    // refetch 
   } = useQuery({
     queryKey: ['users', { searchTerm, filters, page, limit }],
     queryFn: async () => {
@@ -419,12 +419,12 @@ function UserManagement({ className }: UserManagementProps) {
             <div className="space-y-4">
               {Array.from({ length: 5 }).map((_, index) => (
                 <div key={index} className="flex items-center space-x-4">
-                  <LoadingSkeleton className="h-10 w-10 rounded-full" />
+                  <LoadingSkeleton className="h-10 w-10 rounded-full" data-testid="loading-skeleton" />
                   <div className="space-y-2 flex-1">
-                    <LoadingSkeleton className="h-4 w-1/4" />
-                    <LoadingSkeleton className="h-3 w-1/3" />
+                    <LoadingSkeleton className="h-4 w-1/4" data-testid="loading-skeleton" />
+                    <LoadingSkeleton className="h-3 w-1/3" data-testid="loading-skeleton" />
                   </div>
-                  <LoadingSkeleton className="h-6 w-16" />
+                  <LoadingSkeleton className="h-6 w-16" data-testid="loading-skeleton" />
                 </div>
               ))}
             </div>

@@ -14,7 +14,7 @@ import {
   SecurityHeaders, 
   RateLimiter, 
   CSRFProtection, 
-  InputSanitizer,
+  // InputSanitizer,
   XSSPrevention 
 } from './security-utils'
 
@@ -72,20 +72,20 @@ export function rateLimitMiddleware(request: NextRequest) {
 /**
  * CSRF protection middleware
  */
-export function csrfProtectionMiddleware(request: NextRequest) {
+export function csrfProtectionMiddleware(_request: NextRequest) {
   // Skip CSRF check for GET requests
-  if (request.method === 'GET') {
+  if (_request.method === 'GET') {
     return NextResponse.next()
   }
   
   // Skip CSRF check for public API endpoints
   const publicEndpoints = ['/api/health', '/api/auth/login', '/api/auth/register']
-  if (publicEndpoints.includes(request.nextUrl.pathname)) {
+  if (publicEndpoints.includes(_request.nextUrl.pathname)) {
     return NextResponse.next()
   }
   
-  const csrfToken = request.headers.get('X-CSRF-Token')
-  const sessionToken = request.cookies.get('csrf-token')?.value
+  const csrfToken = _request.headers.get('X-CSRF-Token')
+  const sessionToken = _request.cookies.get('csrf-token')?.value
   
   if (!csrfToken || !sessionToken) {
     return new NextResponse('CSRF token missing', { status: 403 })
@@ -101,15 +101,15 @@ export function csrfProtectionMiddleware(request: NextRequest) {
 /**
  * Input validation middleware
  */
-export function inputValidationMiddleware(request: NextRequest) {
+export function inputValidationMiddleware(_request: NextRequest) {
   // Skip validation for GET requests
-  if (request.method === 'GET') {
+  if (_request.method === 'GET') {
     return NextResponse.next()
   }
   
   try {
     // Validate request body
-    const body = request.body
+    const body = _request.body
     if (body) {
       // This would need to be implemented based on the specific endpoint
       // For now, we'll just check for basic XSS patterns
@@ -120,15 +120,15 @@ export function inputValidationMiddleware(request: NextRequest) {
     }
     
     // Validate query parameters
-    const searchParams = request.nextUrl.searchParams
-    for (const [key, value] of searchParams.entries()) {
+    const searchParams = _request.nextUrl.searchParams
+        for (const [, value] of searchParams.entries()) {
       if (XSSPrevention.detectXSS(value)) {
         return new NextResponse('Invalid query parameter', { status: 400 })
       }
     }
     
     return NextResponse.next()
-  } catch (error) {
+    } catch {
     return new NextResponse('Invalid request', { status: 400 })
   }
 }
@@ -235,7 +235,8 @@ function getClientIP(request: NextRequest): string {
     return realIP
   }
   
-  return request.ip || 'unknown'
+  // Fallback: NextRequest does not have an 'ip' property, so return 'unknown'
+  return 'unknown'
 }
 
 /**
@@ -265,8 +266,8 @@ export function securityMiddleware(request: NextRequest) {
     response = securityLoggingMiddleware(request)
     
     return response
-  } catch (error) {
-    console.error('Security middleware error:', error)
+    } catch (_error) {
+    console.error('Security middleware error:', _error)
     return new NextResponse('Internal server error', { status: 500 })
   }
 }
@@ -274,7 +275,8 @@ export function securityMiddleware(request: NextRequest) {
 /**
  * Security middleware for API routes
  */
-export function apiSecurityMiddleware(request: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function apiSecurityMiddleware(_request: NextRequest) {
   const response = NextResponse.next()
   
   // Add API-specific security headers
@@ -294,7 +296,8 @@ export function apiSecurityMiddleware(request: NextRequest) {
 /**
  * Security middleware for static files
  */
-export function staticFileSecurityMiddleware(request: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function staticFileSecurityMiddleware(_request: NextRequest) {
   const response = NextResponse.next()
   
   // Add security headers for static files

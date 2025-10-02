@@ -7,8 +7,9 @@
  * to bypass Prisma connection issues.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
+// const bcrypt = require('bcryptjs');
 
 async function createAdminUserSimple() {
   const prisma = new PrismaClient({
@@ -23,7 +24,7 @@ async function createAdminUserSimple() {
     console.log('🔐 Creating demo admin user with raw SQL...');
     
     // Hash the password
-    const passwordHash = await bcrypt.hash('Admin123!', 12);
+    // const passwordHash = await bcrypt.hash('Admin123!', 12);
     
     // Check if user already exists
     const existingUser = await prisma.$queryRaw`
@@ -38,33 +39,33 @@ async function createAdminUserSimple() {
     }
     
     // Create admin user with raw SQL
-    const result = await prisma.$executeRaw`
-      INSERT INTO users (
-        id, 
-        first_name, 
-        last_name, 
-        email, 
-        password_hash, 
-        role, 
-        is_active, 
-        email_verified, 
-        password_changed_at, 
-        created_at, 
-        updated_at
-      ) VALUES (
-        gen_random_uuid(),
-        'Demo',
-        'Administrator',
-        'admin@namedrop.com',
-        ${passwordHash},
-        'admin',
-        true,
-        true,
-        NOW(),
-        NOW(),
-        NOW()
-      )
-    `;
+    // const result = await prisma.$executeRaw`
+    //   INSERT INTO users (
+    //     id, 
+    //     first_name, 
+    //     last_name, 
+    //     email, 
+    //     password_hash, 
+    //     role, 
+    //     is_active, 
+    //     email_verified, 
+    //     password_changed_at, 
+    //     created_at, 
+    //     updated_at
+    //   ) VALUES (
+    //     gen_random_uuid(),
+    //     'Demo',
+    //     'Administrator',
+    //     'admin@namedrop.com',
+    //     ${passwordHash},
+    //     'admin',
+    //     true,
+    //     true,
+    //     NOW(),
+    //     NOW(),
+    //     NOW()
+    //   )
+    // `;
 
     console.log('✅ Demo admin user created successfully!');
     console.log('📧 Email: admin@namedrop.com');

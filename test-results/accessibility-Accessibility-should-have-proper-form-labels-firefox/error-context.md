@@ -1,0 +1,242 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img "NameDrop Logo" [ref=e7]
+          - navigation [ref=e8]:
+            - button "Dashboard" [ref=e9]
+            - button "Users" [ref=e10]
+            - button "Analytics" [ref=e11]
+            - button "Settings" [ref=e12]
+        - button "D Demo Administrator admin@namedrop.com" [ref=e14]:
+          - generic [ref=e16]: D
+          - generic [ref=e17]:
+            - paragraph [ref=e18]: Demo Administrator
+            - paragraph [ref=e19]: admin@namedrop.com
+          - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - heading "Accessibility Testing" [level=1] [ref=e24]
+            - paragraph [ref=e25]: Test and improve accessibility compliance
+          - generic [ref=e26]: WCAG 2.1 AA
+        - generic [ref=e27]:
+          - generic [ref=e29]:
+            - generic [ref=e30]:
+              - generic [ref=e32]: Test Area
+              - generic [ref=e33]:
+                - generic [ref=e34]:
+                  - heading "Sample Elements" [level=3] [ref=e35]
+                  - generic [ref=e36]:
+                    - button "Accessible Button" [ref=e37]
+                    - button "Secondary Button" [ref=e38]
+                    - textbox "Sample input" [ref=e39]
+                    - generic [ref=e40]:
+                      - checkbox "Sample checkbox" [ref=e41]
+                      - generic [ref=e42]: Sample checkbox
+                    - generic [ref=e43]:
+                      - radio "Sample radio" [ref=e44]
+                      - generic [ref=e45]: Sample radio
+                    - combobox [ref=e46]:
+                      - option "Option 1" [selected]
+                      - option "Option 2"
+                      - option "Option 3"
+                - generic [ref=e47]:
+                  - button "Test All Elements" [ref=e48]
+                  - button "Clear Results" [ref=e49]
+            - generic [ref=e50]:
+              - generic [ref=e52]: Color Contrast Checker
+              - generic [ref=e53]:
+                - generic [ref=e54]:
+                  - generic [ref=e55]:
+                    - generic [ref=e56]: Foreground Color
+                    - textbox [ref=e57]: "#000000"
+                  - generic [ref=e58]:
+                    - generic [ref=e59]: Background Color
+                    - textbox [ref=e60]: "#ffffff"
+                - generic [ref=e61]:
+                  - generic [ref=e62]:
+                    - generic [ref=e63]: Contrast Ratio
+                    - generic [ref=e64]: 0.00:1
+                  - generic [ref=e65]:
+                    - generic [ref=e66]: WCAG AA (4.5:1)
+                    - generic [ref=e67]: Fail
+                  - generic [ref=e68]:
+                    - generic [ref=e69]: WCAG AAA (7:1)
+                    - generic [ref=e70]: Fail
+                - paragraph [ref=e72]: Sample text with current colors
+            - generic [ref=e73]:
+              - generic [ref=e75]: Keyboard Navigation Tester
+              - generic [ref=e76]:
+                - paragraph [ref=e78]: Use Tab, Shift+Tab, Enter, Space, and Arrow keys to navigate
+                - generic [ref=e79]:
+                  - button "Button 1" [ref=e80]
+                  - button "Button 2" [ref=e81]
+                  - button "Button 3" [ref=e82]
+                  - button "Button 4" [ref=e83]
+                  - button "Button 5" [ref=e84]
+                  - button "Button 6" [ref=e85]
+                - generic [ref=e86]:
+                  - heading "Navigation Instructions" [level=4] [ref=e87]
+                  - list [ref=e88]:
+                    - listitem [ref=e89]:
+                      - text: • Use
+                      - generic [ref=e90]: Tab
+                      - text: to move forward
+                    - listitem [ref=e91]:
+                      - text: • Use
+                      - generic [ref=e92]: Shift + Tab
+                      - text: to move backward
+                    - listitem [ref=e93]:
+                      - text: • Use
+                      - generic [ref=e94]: Enter
+                      - text: or
+                      - generic [ref=e95]: Space
+                      - text: to activate
+                    - listitem [ref=e96]:
+                      - text: • Use
+                      - generic [ref=e97]: Arrow Keys
+                      - text: to navigate within groups
+          - generic [ref=e98]:
+            - generic [ref=e100]: WCAG 2.1 Guidelines
+            - generic [ref=e101]:
+              - generic [ref=e102]:
+                - heading "Perceivable" [level=4] [ref=e103]
+                - list [ref=e104]:
+                  - listitem [ref=e105]: • Provide text alternatives for images
+                  - listitem [ref=e106]: • Provide captions for videos
+                  - listitem [ref=e107]: • Use sufficient color contrast
+                  - listitem [ref=e108]: • Make content adaptable
+              - generic [ref=e109]:
+                - heading "Operable" [level=4] [ref=e110]
+                - list [ref=e111]:
+                  - listitem [ref=e112]: • Make all functionality keyboard accessible
+                  - listitem [ref=e113]: • Provide enough time to read content
+                  - listitem [ref=e114]: • Avoid content that causes seizures
+                  - listitem [ref=e115]: • Help users navigate and find content
+              - generic [ref=e116]:
+                - heading "Understandable" [level=4] [ref=e117]
+                - list [ref=e118]:
+                  - listitem [ref=e119]: • Make text readable and understandable
+                  - listitem [ref=e120]: • Make content appear and operate predictably
+                  - listitem [ref=e121]: • Help users avoid and correct mistakes
+              - generic [ref=e122]:
+                - heading "Robust" [level=4] [ref=e123]
+                - list [ref=e124]:
+                  - listitem [ref=e125]: • Maximize compatibility with assistive technologies
+                  - listitem [ref=e126]: • Use valid, semantic HTML
+                  - listitem [ref=e127]: • Follow accessibility standards
+          - generic [ref=e128]:
+            - generic [ref=e130]: Color Contrast Checker
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - generic [ref=e133]: Foreground Color
+                - textbox [ref=e134]: "#000000"
+              - generic [ref=e135]:
+                - generic [ref=e136]: Background Color
+                - textbox [ref=e137]: "#ffffff"
+              - generic [ref=e138]:
+                - generic [ref=e139]:
+                  - generic [ref=e140]: Contrast Ratio
+                  - generic [ref=e141]: 4.5:1
+                - generic [ref=e142]:
+                  - generic [ref=e143]: WCAG AA
+                  - generic [ref=e144]: Pass
+                - generic [ref=e145]:
+                  - generic [ref=e146]: WCAG AAA
+                  - generic [ref=e147]: Fail
+              - button "Check Contrast" [ref=e148]
+          - generic [ref=e149]:
+            - generic [ref=e151]: Keyboard Navigation
+            - generic [ref=e152]:
+              - generic [ref=e153]:
+                - heading "Navigation Keys" [level=4] [ref=e154]
+                - list [ref=e155]:
+                  - listitem [ref=e156]:
+                    - text: •
+                    - generic [ref=e157]: Tab
+                    - text: "- Move to next element"
+                  - listitem [ref=e158]:
+                    - text: •
+                    - generic [ref=e159]: Shift + Tab
+                    - text: "- Move to previous element"
+                  - listitem [ref=e160]:
+                    - text: •
+                    - generic [ref=e161]: Enter
+                    - text: "- Activate element"
+                  - listitem [ref=e162]:
+                    - text: •
+                    - generic [ref=e163]: Space
+                    - text: "- Activate element"
+                  - listitem [ref=e164]:
+                    - text: •
+                    - generic [ref=e165]: Escape
+                    - text: "- Close modal/menu"
+                  - listitem [ref=e166]:
+                    - text: •
+                    - generic [ref=e167]: Arrow Keys
+                    - text: "- Navigate within groups"
+              - generic [ref=e168]:
+                - heading "Focus Indicators" [level=4] [ref=e169]
+                - paragraph [ref=e170]: All interactive elements should have visible focus indicators
+          - generic [ref=e171]:
+            - generic [ref=e173]: Screen Reader Testing
+            - generic [ref=e174]:
+              - generic [ref=e175]:
+                - heading "Testing Tools" [level=4] [ref=e176]
+                - list [ref=e177]:
+                  - listitem [ref=e178]: • NVDA (Windows, free)
+                  - listitem [ref=e179]: • JAWS (Windows, paid)
+                  - listitem [ref=e180]: • VoiceOver (macOS, free)
+                  - listitem [ref=e181]: • TalkBack (Android, free)
+                  - listitem [ref=e182]: • VoiceOver (iOS, free)
+              - generic [ref=e183]:
+                - heading "Testing Checklist" [level=4] [ref=e184]
+                - list [ref=e185]:
+                  - listitem [ref=e186]: • All content is announced
+                  - listitem [ref=e187]: • Navigation is logical
+                  - listitem [ref=e188]: • Form labels are clear
+                  - listitem [ref=e189]: • Error messages are announced
+                  - listitem [ref=e190]: • Headings are properly structured
+          - generic [ref=e191]:
+            - generic [ref=e193]: Resources
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - heading "Documentation" [level=4] [ref=e196]
+                - list [ref=e197]:
+                  - listitem [ref=e198]:
+                    - text: •
+                    - link "WCAG 2.1 Quick Reference" [ref=e199] [cursor=pointer]:
+                      - /url: https://www.w3.org/WAI/WCAG21/quickref/
+                  - listitem [ref=e200]:
+                    - text: •
+                    - link "WebAIM" [ref=e201] [cursor=pointer]:
+                      - /url: https://webaim.org/
+                  - listitem [ref=e202]:
+                    - text: •
+                    - link "Accessibility Developer Guide" [ref=e203] [cursor=pointer]:
+                      - /url: https://www.accessibility-developer-guide.com/
+              - generic [ref=e204]:
+                - heading "Testing Tools" [level=4] [ref=e205]
+                - list [ref=e206]:
+                  - listitem [ref=e207]:
+                    - text: •
+                    - link "WAVE" [ref=e208] [cursor=pointer]:
+                      - /url: https://wave.webaim.org/
+                  - listitem [ref=e209]:
+                    - text: •
+                    - link "axe DevTools" [ref=e210] [cursor=pointer]:
+                      - /url: https://www.deque.com/axe/
+                  - listitem [ref=e211]:
+                    - text: •
+                    - link "Browser Extensions" [ref=e212] [cursor=pointer]:
+                      - /url: https://www.accessibility-developer-guide.com/tools/browser-extensions/
+  - button "Open Next.js Dev Tools" [ref=e218] [cursor=pointer]:
+    - img [ref=e219] [cursor=pointer]
+  - alert [ref=e223]
+```

@@ -386,7 +386,8 @@ export function getRateLimitStats(): {
   totalRequests: number
   oldestEntry: number | null
 } {
-  const now = Date.now()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _now = Date.now()
   let totalRequests = 0
   let oldestEntry: number | null = null
   

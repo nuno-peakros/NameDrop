@@ -1,60 +1,56 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { NextRequest } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { GET as getUsersHandler, POST as createUserHandler } from '@/app/api/users/route'
 import { GET as getUserHandler, PUT as updateUserHandler, DELETE as deleteUserHandler } from '@/app/api/users/[id]/route'
 import { POST as reactivateUserHandler } from '@/app/api/users/[id]/reactivate/route'
 import { POST as resendVerificationHandler } from '@/app/api/users/[id]/resend-verification/route'
 import { POST as resetPasswordHandler } from '@/app/api/users/[id]/reset-password/route'
+import * as userService from '@/lib/user-service'
+import * as authService from '@/lib/auth-service'
+import * as validation from '@/lib/validation'
+// import * as emailVerification from '@/lib/email-verification'
+import * as passwordReset from '@/lib/password-reset'
 
-// Mock the user service
-const mockUserService = {
+// Mock the user service module
+vi.mock('@/lib/user-service', () => ({
   searchUsers: vi.fn(),
   createUser: vi.fn(),
   getUserById: vi.fn(),
   updateUser: vi.fn(),
   deactivateUser: vi.fn(),
   reactivateUser: vi.fn(),
-}
-
-// Mock the user service module
-vi.mock('@/lib/user-service', () => mockUserService)
-
-// Mock the auth service
-const mockAuthService = {
-  getSessionFromToken: vi.fn(),
-  isAdmin: vi.fn(),
-}
+}))
 
 // Mock the auth service module
-vi.mock('@/lib/auth-service', () => mockAuthService)
+vi.mock('@/lib/auth-service', () => ({
+  getSessionFromToken: vi.fn(),
+  isAdmin: vi.fn(),
+  sendUserEmailVerification: vi.fn(),
+}))
 
 // Mock validation
-const mockValidation = {
+vi.mock('@/lib/validation', () => ({
   validateQueryParams: vi.fn(),
   validateRequestBody: vi.fn(),
+  validatePathParams: vi.fn(),
   createValidationErrorResponse: vi.fn(),
   userSchemas: {
     searchFilters: 'search-filters-schema',
     pagination: 'pagination-schema',
     createUser: 'create-user-schema',
     updateUser: 'update-user-schema',
+    userId: 'user-id-schema',
   },
-}
-
-vi.mock('@/lib/validation', () => mockValidation)
+}))
 
 // Mock email services
-const mockEmailServices = {
-  resendVerificationEmail: vi.fn(),
-  adminResetPassword: vi.fn(),
-}
-
 vi.mock('@/lib/email-verification', () => ({
-  resendVerificationEmail: mockEmailServices.resendVerificationEmail,
+  resendVerificationEmail: vi.fn(),
 }))
 
 vi.mock('@/lib/password-reset', () => ({
-  adminResetPassword: mockEmailServices.adminResetPassword,
+  adminResetPassword: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
 }))
 
 /**
@@ -81,8 +77,8 @@ describe('Users API Endpoints', () => {
     role: 'user',
     isActive: true,
     emailVerified: true,
-    createdAt: new Date('2023-01-01T00:00:00Z'),
-    updatedAt: new Date('2023-01-01T00:00:00Z'),
+    createdAt: '2023-01-01T00:00:00.000Z',
+    updatedAt: '2023-01-01T00:00:00.000Z',
   }
 
   const mockAdminUser = {
@@ -93,12 +89,12 @@ describe('Users API Endpoints', () => {
     role: 'admin',
     isActive: true,
     emailVerified: true,
-    createdAt: new Date('2023-01-01T00:00:00Z'),
-    updatedAt: new Date('2023-01-01T00:00:00Z'),
+    createdAt: '2023-01-01T00:00:00.000Z',
+    updatedAt: '2023-01-01T00:00:00.000Z',
   }
 
   const mockSession = {
-    id: 'admin-123',
+    userId: 'admin-123',
     email: 'admin@example.com',
     role: 'admin',
   }
@@ -129,16 +125,16 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock validation
-      mockValidation.validateQueryParams
-        .mockResolvedValueOnce({ success: true, data: { search: 'john', role: 'user' } })
-        .mockResolvedValueOnce({ success: true, data: { page: 1, limit: 20 } })
+      vi.mocked(validation).validateQueryParams
+        .mockReturnValueOnce({ success: true, data: { search: 'john', role: 'user' } })
+        .mockReturnValueOnce({ success: true, data: { page: 1, limit: 20 } })
 
       // Mock user service
-      mockUserService.searchUsers.mockResolvedValue({
+      vi.mocked(userService).searchUsers.mockResolvedValue({
         success: true,
         data: mockPaginatedUsers,
         message: 'Users retrieved successfully',
@@ -152,9 +148,9 @@ describe('Users API Endpoints', () => {
       expect(data.data).toEqual(mockPaginatedUsers)
       expect(data.message).toBe('Users retrieved successfully')
 
-      expect(mockAuthService.getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
-      expect(mockAuthService.isAdmin).toHaveBeenCalledWith('admin')
-      expect(mockUserService.searchUsers).toHaveBeenCalledWith(
+      expect(vi.mocked(authService).getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
+      expect(vi.mocked(authService).isAdmin).toHaveBeenCalledWith('admin')
+      expect(vi.mocked(userService).searchUsers).toHaveBeenCalledWith(
         { search: 'john', role: 'user' },
         { page: 1, limit: 20 }
       )
@@ -183,7 +179,7 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation failure
-      mockAuthService.getSessionFromToken.mockResolvedValue(null)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(null)
 
       const response = await getUsersHandler(request)
       const data = await response.json()
@@ -203,12 +199,12 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue({
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue({
         id: 'user-123',
         email: 'user@example.com',
         role: 'user',
       })
-      mockAuthService.isAdmin.mockReturnValue(false)
+      vi.mocked(authService).isAdmin.mockReturnValue(false)
 
       const response = await getUsersHandler(request)
       const data = await response.json()
@@ -228,11 +224,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock validation failure
-      mockValidation.validateQueryParams.mockResolvedValue({
+      vi.mocked(validation).validateQueryParams.mockReturnValue({
         success: false,
         errors: [
           { field: 'page', message: 'Page must be a number' },
@@ -244,12 +240,12 @@ describe('Users API Endpoints', () => {
         { success: false, error: { code: 'VALIDATION_ERROR', message: 'Validation failed' } },
         { status: 400 }
       )
-      mockValidation.createValidationErrorResponse.mockReturnValue(mockValidationErrorResponse)
+      vi.mocked(validation).createValidationErrorResponse.mockReturnValue(mockValidationErrorResponse)
 
       const response = await getUsersHandler(request)
 
       expect(response.status).toBe(400)
-      expect(mockValidation.createValidationErrorResponse).toHaveBeenCalledWith([
+      expect(vi.mocked(validation).createValidationErrorResponse).toHaveBeenCalledWith([
         { field: 'page', message: 'Page must be a number' },
         { field: 'limit', message: 'Limit must be a number' },
       ])
@@ -264,16 +260,16 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock validation
-      mockValidation.validateQueryParams
-        .mockResolvedValueOnce({ success: true, data: {} })
-        .mockResolvedValueOnce({ success: true, data: { page: 1, limit: 20 } })
+      vi.mocked(validation).validateQueryParams
+        .mockReturnValueOnce({ success: true, data: {} })
+        .mockReturnValueOnce({ success: true, data: { page: 1, limit: 20 } })
 
       // Mock user service error
-      mockUserService.searchUsers.mockResolvedValue({
+      vi.mocked(userService).searchUsers.mockResolvedValue({
         success: false,
         error: 'DATABASE_ERROR',
         message: 'Database connection failed',
@@ -306,11 +302,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock validation
-      mockValidation.validateRequestBody.mockResolvedValue({
+      vi.mocked(validation).validateRequestBody.mockResolvedValue({
         success: true,
         data: {
           firstName: 'Jane',
@@ -332,13 +328,13 @@ describe('Users API Endpoints', () => {
             role: 'user',
             isActive: true,
             emailVerified: false,
-            createdAt: new Date('2023-01-01T00:00:00Z'),
+            createdAt: '2023-01-01T00:00:00.000Z',
           },
           temporaryPassword: 'tempPassword123',
         },
         message: 'User created successfully',
       }
-      mockUserService.createUser.mockResolvedValue(mockCreateResult)
+      vi.mocked(userService).createUser.mockResolvedValue(mockCreateResult)
 
       const response = await createUserHandler(request)
       const data = await response.json()
@@ -348,10 +344,10 @@ describe('Users API Endpoints', () => {
       expect(data.data).toEqual(mockCreateResult.data)
       expect(data.message).toBe('User created successfully')
 
-      expect(mockAuthService.getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
-      expect(mockAuthService.isAdmin).toHaveBeenCalledWith('admin')
-      expect(mockValidation.validateRequestBody).toHaveBeenCalledWith('create-user-schema', request)
-      expect(mockUserService.createUser).toHaveBeenCalledWith({
+      expect(vi.mocked(authService).getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
+      expect(vi.mocked(authService).isAdmin).toHaveBeenCalledWith('admin')
+      expect(vi.mocked(validation).validateRequestBody).toHaveBeenCalledWith('create-user-schema', request)
+      expect(vi.mocked(userService).createUser).toHaveBeenCalledWith({
         firstName: 'Jane',
         lastName: 'Smith',
         email: 'jane@example.com',
@@ -375,11 +371,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock validation
-      mockValidation.validateRequestBody.mockResolvedValue({
+      vi.mocked(validation).validateRequestBody.mockResolvedValue({
         success: true,
         data: {
           firstName: 'Jane',
@@ -390,7 +386,7 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock user creation failure
-      mockUserService.createUser.mockResolvedValue({
+      vi.mocked(userService).createUser.mockResolvedValue({
         success: false,
         error: 'EMAIL_EXISTS',
         message: 'Email address already exists',
@@ -416,11 +412,17 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
+
+      // Mock path validation
+      vi.mocked(validation).validatePathParams.mockReturnValue({
+        success: true,
+        data: { id: 'user-123' },
+      })
 
       // Mock user service
-      mockUserService.getUserById.mockResolvedValue({
+      vi.mocked(userService).getUserById.mockResolvedValue({
         success: true,
         data: mockUser,
         message: 'User retrieved successfully',
@@ -434,9 +436,9 @@ describe('Users API Endpoints', () => {
       expect(data.data).toEqual(mockUser)
       expect(data.message).toBe('User retrieved successfully')
 
-      expect(mockAuthService.getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
-      expect(mockAuthService.isAdmin).toHaveBeenCalledWith('admin')
-      expect(mockUserService.getUserById).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(authService).getSessionFromToken).toHaveBeenCalledWith('admin-token-123')
+      expect(vi.mocked(authService).isAdmin).toHaveBeenCalledWith('admin')
+      expect(vi.mocked(userService).getUserById).toHaveBeenCalledWith('user-123')
     })
 
     it('should return 404 for user not found', async () => {
@@ -448,11 +450,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock user service
-      mockUserService.getUserById.mockResolvedValue({
+      vi.mocked(userService).getUserById.mockResolvedValue({
         success: false,
         error: 'USER_NOT_FOUND',
         message: 'User not found',
@@ -483,11 +485,17 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
+
+      // Mock path validation
+      vi.mocked(validation).validatePathParams.mockReturnValue({
+        success: true,
+        data: { id: 'user-123' },
+      })
 
       // Mock validation
-      mockValidation.validateRequestBody.mockResolvedValue({
+      vi.mocked(validation).validateRequestBody.mockResolvedValue({
         success: true,
         data: {
           firstName: 'John Updated',
@@ -500,9 +508,9 @@ describe('Users API Endpoints', () => {
         ...mockUser,
         firstName: 'John Updated',
         lastName: 'Doe Updated',
-        updatedAt: new Date('2023-01-02T00:00:00Z'),
+        updatedAt: '2023-01-02T00:00:00.000Z',
       }
-      mockUserService.updateUser.mockResolvedValue({
+      vi.mocked(userService).updateUser.mockResolvedValue({
         success: true,
         data: updatedUser,
         message: 'User updated successfully',
@@ -516,7 +524,7 @@ describe('Users API Endpoints', () => {
       expect(data.data).toEqual(updatedUser)
       expect(data.message).toBe('User updated successfully')
 
-      expect(mockUserService.updateUser).toHaveBeenCalledWith('user-123', {
+      expect(vi.mocked(userService).updateUser).toHaveBeenCalledWith('user-123', {
         firstName: 'John Updated',
         lastName: 'Doe Updated',
       })
@@ -533,11 +541,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock user deactivation
-      mockUserService.deactivateUser.mockResolvedValue({
+      vi.mocked(userService).deactivateUser.mockResolvedValue({
         success: true,
         message: 'User deactivated successfully',
       })
@@ -549,7 +557,7 @@ describe('Users API Endpoints', () => {
       expect(data.success).toBe(true)
       expect(data.message).toBe('User deactivated successfully')
 
-      expect(mockUserService.deactivateUser).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(userService).deactivateUser).toHaveBeenCalledWith('user-123')
     })
   })
 
@@ -563,11 +571,11 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
 
       // Mock user reactivation
-      mockUserService.reactivateUser.mockResolvedValue({
+      vi.mocked(userService).reactivateUser.mockResolvedValue({
         success: true,
         message: 'User reactivated successfully',
       })
@@ -579,7 +587,7 @@ describe('Users API Endpoints', () => {
       expect(data.success).toBe(true)
       expect(data.message).toBe('User reactivated successfully')
 
-      expect(mockUserService.reactivateUser).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(userService).reactivateUser).toHaveBeenCalledWith('user-123')
     })
   })
 
@@ -593,11 +601,17 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
+
+      // Mock path validation
+      vi.mocked(validation).validatePathParams.mockReturnValue({
+        success: true,
+        data: { id: 'user-123' },
+      })
 
       // Mock email service
-      mockEmailServices.resendVerificationEmail.mockResolvedValue({
+      vi.mocked(authService.sendUserEmailVerification).mockResolvedValue({
         success: true,
         message: 'Verification email sent',
       })
@@ -609,7 +623,7 @@ describe('Users API Endpoints', () => {
       expect(data.success).toBe(true)
       expect(data.message).toBe('Verification email sent')
 
-      expect(mockEmailServices.resendVerificationEmail).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(authService.sendUserEmailVerification)).toHaveBeenCalledWith('user-123')
     })
   })
 
@@ -623,14 +637,26 @@ describe('Users API Endpoints', () => {
       })
 
       // Mock session validation
-      mockAuthService.getSessionFromToken.mockResolvedValue(mockSession)
-      mockAuthService.isAdmin.mockReturnValue(true)
+      vi.mocked(authService).getSessionFromToken.mockResolvedValue(mockSession)
+      vi.mocked(authService).isAdmin.mockImplementation((role) => role === 'admin')
+
+      // Mock path validation
+      vi.mocked(validation).validatePathParams.mockReturnValue({
+        success: true,
+        data: { id: 'user-123' },
+      })
+
+      // Mock user service
+      vi.mocked(userService).getUserById.mockResolvedValue({
+        success: true,
+        data: mockUser,
+        message: 'User retrieved successfully',
+      })
 
       // Mock password reset service
-      mockEmailServices.adminResetPassword.mockResolvedValue({
+      vi.mocked(passwordReset.sendPasswordResetEmail).mockResolvedValue({
         success: true,
-        message: 'Password reset successfully',
-        temporaryPassword: 'tempPassword123',
+        message: 'Password reset email sent successfully',
       })
 
       const response = await resetPasswordHandler(request, { params: { id: 'user-123' } })
@@ -638,10 +664,10 @@ describe('Users API Endpoints', () => {
 
       expect(response.status).toBe(200)
       expect(data.success).toBe(true)
-      expect(data.message).toBe('Password reset successfully')
-      expect(data.temporaryPassword).toBe('tempPassword123')
+      expect(data.message).toBe('If the user account exists, a password reset link has been sent.')
 
-      expect(mockEmailServices.adminResetPassword).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(userService).getUserById).toHaveBeenCalledWith('user-123')
+      expect(vi.mocked(passwordReset.sendPasswordResetEmail)).toHaveBeenCalledWith('john@example.com')
     })
   })
 })

@@ -5,6 +5,7 @@
  * PostgreSQL credentials and creates the necessary tables.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client')
 
 async function testDatabaseConnection() {

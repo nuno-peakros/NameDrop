@@ -85,13 +85,13 @@ export async function POST(request: NextRequest) {
     const changeResult = await changePassword(session.userId, currentPassword, newPassword)
 
     if (!changeResult.success) {
-      const statusCode = changeResult.error === 'INVALID_CURRENT_PASSWORD' ? 400 : 500
+      const statusCode = changeResult.message === 'Current password is incorrect' ? 400 : 500
       
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: changeResult.error || 'CHANGE_PASSWORD_FAILED',
+            code: changeResult.message === 'Current password is incorrect' ? 'INVALID_CURRENT_PASSWORD' : 'CHANGE_PASSWORD_FAILED',
             message: changeResult.message,
           },
         },

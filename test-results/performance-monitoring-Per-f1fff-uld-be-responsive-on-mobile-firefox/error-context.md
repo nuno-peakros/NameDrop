@@ -1,0 +1,84 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - img "NameDrop Logo" [ref=e7]
+        - generic [ref=e8]:
+          - button [ref=e9]:
+            - img
+          - button "D" [ref=e10]:
+            - generic [ref=e12]: D
+            - img
+    - main [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e16]:
+            - heading "Performance Monitor" [level=1] [ref=e17]
+            - paragraph [ref=e18]: Monitor and analyze application performance metrics
+          - generic [ref=e19]: Real-time
+        - generic [ref=e20]:
+          - generic [ref=e22]:
+            - generic [ref=e25]: Core Web Vitals
+            - generic [ref=e26]:
+              - generic [ref=e28]: Bundle Size
+              - generic [ref=e29]:
+                - generic [ref=e30]:
+                  - generic [ref=e31]: JavaScript
+                  - generic [ref=e32]: 0 B
+                - generic [ref=e33]:
+                  - generic [ref=e34]: CSS
+                  - generic [ref=e35]: 0 B
+                - generic [ref=e36]:
+                  - generic [ref=e37]: Total
+                  - generic [ref=e38]: 0 B
+            - generic [ref=e39]:
+              - generic [ref=e41]: Performance Score
+              - generic [ref=e43]:
+                - generic [ref=e44]: N/A
+                - paragraph [ref=e45]: Based on Core Web Vitals
+                - button "Refresh Metrics" [ref=e46]
+          - generic [ref=e47]:
+            - generic [ref=e49]: Performance Tips
+            - generic [ref=e50]:
+              - generic [ref=e51]:
+                - heading "Optimize Images" [level=4] [ref=e52]
+                - paragraph [ref=e53]: Use WebP/AVIF formats and proper sizing to reduce image load times.
+              - generic [ref=e54]:
+                - heading "Code Splitting" [level=4] [ref=e55]
+                - paragraph [ref=e56]: Implement dynamic imports to reduce initial bundle size.
+              - generic [ref=e57]:
+                - heading "Caching" [level=4] [ref=e58]
+                - paragraph [ref=e59]: Leverage browser caching and CDN for static assets.
+              - generic [ref=e60]:
+                - heading "Lazy Loading" [level=4] [ref=e61]
+                - paragraph [ref=e62]: Load components and images only when needed.
+          - generic [ref=e63]:
+            - generic [ref=e65]: Performance Standards
+            - generic [ref=e66]:
+              - generic [ref=e67]:
+                - generic [ref=e68]:
+                  - generic [ref=e69]: FCP
+                  - generic [ref=e70]: ≤ 1.8s
+                - paragraph [ref=e71]: First Contentful Paint
+              - generic [ref=e72]:
+                - generic [ref=e73]:
+                  - generic [ref=e74]: LCP
+                  - generic [ref=e75]: ≤ 2.5s
+                - paragraph [ref=e76]: Largest Contentful Paint
+              - generic [ref=e77]:
+                - generic [ref=e78]:
+                  - generic [ref=e79]: FID
+                  - generic [ref=e80]: ≤ 100ms
+                - paragraph [ref=e81]: First Input Delay
+              - generic [ref=e82]:
+                - generic [ref=e83]:
+                  - generic [ref=e84]: CLS
+                  - generic [ref=e85]: ≤ 0.1
+                - paragraph [ref=e86]: Cumulative Layout Shift
+  - button "Open Next.js Dev Tools" [ref=e92] [cursor=pointer]:
+    - img [ref=e93] [cursor=pointer]
+  - alert [ref=e97]
+```

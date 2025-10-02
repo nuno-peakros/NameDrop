@@ -22,7 +22,7 @@ import { getSessionFromToken, isAdmin } from '@/lib/auth-service'
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get authorization header
@@ -73,7 +73,8 @@ export async function GET(
     }
 
     // Validate path parameters
-    const pathValidation = validatePathParams(userSchemas.userId, params)
+    const resolvedParams = await params
+    const pathValidation = validatePathParams(userSchemas.userId, resolvedParams)
     if (!pathValidation.success) {
       return createValidationErrorResponse(pathValidation.errors)
     }
@@ -150,7 +151,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get authorization header
@@ -201,7 +202,8 @@ export async function PUT(
     }
 
     // Validate path parameters
-    const pathValidation = validatePathParams(userSchemas.userId, params)
+    const resolvedParams = await params
+    const pathValidation = validatePathParams(userSchemas.userId, resolvedParams)
     if (!pathValidation.success) {
       return createValidationErrorResponse(pathValidation.errors)
     }
@@ -279,7 +281,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get authorization header
@@ -330,7 +332,8 @@ export async function DELETE(
     }
 
     // Validate path parameters
-    const pathValidation = validatePathParams(userSchemas.userId, params)
+    const resolvedParams = await params
+    const pathValidation = validatePathParams(userSchemas.userId, resolvedParams)
     if (!pathValidation.success) {
       return createValidationErrorResponse(pathValidation.errors)
     }

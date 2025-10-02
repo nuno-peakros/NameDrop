@@ -19,7 +19,14 @@ import {
  * - Performance score
  */
 export function PerformanceMonitor() {
-  const [metrics, setMetrics] = useState<Record<string, number>>({})
+  const [metrics, setMetrics] = useState<{
+    fcp?: number
+    lcp?: number
+    fid?: number
+    cls?: number
+    ttfb?: number
+    fmp?: number
+  }>({})
   const [bundleSize, setBundleSize] = useState({ js: 0, css: 0, total: 0 })
   const [isSupported, setIsSupported] = useState(false)
 

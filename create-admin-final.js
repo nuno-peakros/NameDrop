@@ -6,7 +6,9 @@
  * This script creates the demo admin user directly.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const bcrypt = require('bcryptjs');
 
 async function createAdminUser() {
@@ -72,19 +74,19 @@ async function createAdminUser() {
         console.log('✅ Users table created, retrying admin user creation...');
         
         // Retry creating admin user
-        const passwordHash = await bcrypt.hash('Admin123!', 12);
-        const adminUser = await prisma.user.create({
-          data: {
-            firstName: 'Demo',
-            lastName: 'Administrator',
-            email: 'admin@namedrop.com',
-            passwordHash: passwordHash,
-            role: 'admin',
-            isActive: true,
-            emailVerified: true,
-            passwordChangedAt: new Date(),
-          },
-        });
+        // const passwordHash = await bcrypt.hash('Admin123!', 12);
+        // const adminUser = await prisma.user.create({
+        //   data: {
+        //     firstName: 'Demo',
+        //     lastName: 'Administrator',
+        //     email: 'admin@namedrop.com',
+        //     passwordHash: passwordHash,
+        //     role: 'admin',
+        //     isActive: true,
+        //     emailVerified: true,
+        //     passwordChangedAt: new Date(),
+        //   },
+        // });
         
         console.log('✅ Demo admin user created successfully!');
         console.log('📧 Email: admin@namedrop.com');

@@ -42,7 +42,7 @@ export interface LogEntry {
   timestamp: string;
   level: string;
   message: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   requestId?: string;
   userId?: string;
   duration?: number;
@@ -72,7 +72,7 @@ export interface RequestLogData {
 export interface UserActionLogData {
   action: string;
   userId: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown>;
   resourceId?: string;
   resourceType?: string;
 }
@@ -84,7 +84,7 @@ export interface PerformanceLogData {
   operation: string;
   duration: number;
   memoryUsage?: NodeJS.MemoryUsage;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 /**
@@ -163,7 +163,7 @@ function generateRequestId(): string {
  * @param depth - Current recursion depth
  * @returns Sanitized context object
  */
-function sanitizeContext(context: any, depth: number = 0): any {
+function sanitizeContext(context: unknown, depth: number = 0): unknown {
   if (depth > config.maxContextDepth) {
     return '[Max depth reached]';
   }
@@ -181,7 +181,7 @@ function sanitizeContext(context: any, depth: number = 0): any {
   }
 
   if (typeof context === 'object') {
-    const sanitized: any = {};
+    const sanitized: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(context)) {
       if (config.sensitiveFields.some(field => key.toLowerCase().includes(field.toLowerCase()))) {
         sanitized[key] = '[REDACTED]';
@@ -239,7 +239,7 @@ function formatConsoleLog(entry: LogEntry): string {
 function createLogEntry(
   level: LogLevel,
   message: string,
-  context?: Record<string, any>,
+  context?: Record<string, unknown>,
   requestId?: string,
   userId?: string,
   duration?: number,
@@ -255,7 +255,7 @@ function createLogEntry(
   };
 
   if (context) {
-    entry.context = sanitizeContext(context);
+    entry.context = sanitizeContext(context) as Record<string, unknown>;
   }
 
   if (error) {
@@ -314,7 +314,7 @@ class Logger {
    */
   debug(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ): void {
@@ -339,7 +339,7 @@ class Logger {
    */
   info(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ): void {
@@ -364,7 +364,7 @@ class Logger {
    */
   warn(
     message: string,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ): void {
@@ -391,7 +391,7 @@ class Logger {
   error(
     message: string,
     error?: Error,
-    context?: Record<string, any>,
+    context?: Record<string, unknown>,
     requestId?: string,
     userId?: string
   ): void {
@@ -506,12 +506,13 @@ class Logger {
    * userLogger.info('Processing user request'); // Will include userId and requestId
    * ```
    */
-  child(context: Record<string, any>): Logger {
+  child(context: Record<string, unknown>): Logger {
     const childLogger = new Logger();
     const originalWriteLog = writeLog;
     
     // Override writeLog to include child context
-    const childWriteLog = (entry: LogEntry) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _childWriteLog = (entry: LogEntry) => {
       const mergedContext = { ...context, ...entry.context };
       const childEntry = { ...entry, context: mergedContext };
       originalWriteLog(childEntry);
@@ -520,11 +521,11 @@ class Logger {
     // Override all methods to use child context
     const methods = ['debug', 'info', 'warn', 'error'] as const;
     methods.forEach(method => {
-      const originalMethod = childLogger[method].bind(childLogger);
-      childLogger[method] = (message: string, ...args: any[]) => {
+      const originalMethod = childLogger[method].bind(childLogger) as (message: string, context?: Record<string, unknown>, requestId?: string, userId?: string) => void;
+      childLogger[method] = (message: string, ...args: unknown[]) => {
         const [contextArg, requestId, userId] = args;
-        const mergedContext = { ...context, ...contextArg };
-        originalMethod(message, mergedContext, requestId, userId);
+        const mergedContext = { ...context, ...(contextArg as Record<string, unknown> || {}) };
+        originalMethod(message, mergedContext, requestId as string, userId as string);
       };
     });
     
@@ -572,10 +573,10 @@ export function createRequestLogger(requestId: string, userId?: string): Logger 
  * ```
  */
 export function createPerformanceMeasurer(operation: string, logger: Logger) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (target: unknown, propertyName: string, descriptor: PropertyDescriptor) {
     const method = descriptor.value;
     
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const start = Date.now();
       const startMemory = process.memoryUsage();
       
@@ -592,6 +593,7 @@ export function createPerformanceMeasurer(operation: string, logger: Logger) {
             heapUsed: endMemory.heapUsed - startMemory.heapUsed,
             heapTotal: endMemory.heapTotal - startMemory.heapTotal,
             external: endMemory.external - startMemory.external,
+            arrayBuffers: endMemory.arrayBuffers - startMemory.arrayBuffers,
           },
         });
         
@@ -617,33 +619,35 @@ export function createPerformanceMeasurer(operation: string, logger: Logger) {
  * ```
  */
 export function requestLoggingMiddleware(logger: Logger) {
-  return (req: any, res: any, next: any) => {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  return (req: unknown, res: unknown, next: unknown) => {
     const start = Date.now();
     const requestId = generateRequestId();
     
     // Add request ID to request object
-    req.requestId = requestId;
+    (req as any).requestId = requestId;
     
     // Override res.end to log response
-    const originalEnd = res.end;
-    res.end = function (chunk?: any, encoding?: any) {
+    const originalEnd = (res as any).end;
+    (res as any).end = function (chunk?: unknown, encoding?: unknown) {
       const duration = Date.now() - start;
       
       logger.logRequest({
-        method: req.method,
-        path: req.path,
-        statusCode: res.statusCode,
+        method: (req as any).method,
+        path: (req as any).path,
+        statusCode: (res as any).statusCode,
         duration,
-        userAgent: req.get('User-Agent'),
-        ip: req.ip || req.connection.remoteAddress,
-        userId: req.user?.id,
+        userAgent: (req as any).get('User-Agent'),
+        ip: (req as any).ip || (req as any).connection.remoteAddress,
+        userId: (req as any).user?.id,
       });
       
       originalEnd.call(this, chunk, encoding);
     };
     
-    next();
+    (next as any)();
   };
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 }
 
 export default logger;

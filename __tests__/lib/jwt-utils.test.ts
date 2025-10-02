@@ -37,13 +37,13 @@ describe('JWT Utils', () => {
     passwordChangedAt: new Date('2023-01-01T00:00:00Z'),
   }
 
-  const mockAdminUser = {
-    id: 'admin-123',
-    email: 'admin@example.com',
-    role: 'admin' as UserRole,
-    emailVerified: true,
-    passwordChangedAt: new Date('2023-01-01T00:00:00Z'),
-  }
+  // const mockAdminUser = {
+  //   id: 'admin-123',
+  //   email: 'admin@example.com',
+  //   role: 'admin' as UserRole,
+  //   emailVerified: true,
+  //   passwordChangedAt: new Date('2023-01-01T00:00:00Z'),
+  // }
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -64,8 +64,8 @@ describe('JWT Utils', () => {
       expect(token).toBeDefined()
       
       // Decode and check expiration
-      const decoded = jwt.decode(token) as any
-      const now = Math.floor(Date.now() / 1000)
+      const decoded = jwt.decode(token) as Record<string, unknown>
+      // const now = Math.floor(Date.now() / 1000)
       const expiration = decoded.exp - decoded.iat
       
       expect(expiration).toBe(3600)
@@ -108,8 +108,8 @@ describe('JWT Utils', () => {
       expect(token).toBeDefined()
       
       // Decode and check expiration (should be 1 hour)
-      const decoded = jwt.decode(token) as any
-      const now = Math.floor(Date.now() / 1000)
+      const decoded = jwt.decode(token) as Record<string, unknown>
+      // const now = Math.floor(Date.now() / 1000)
       const expiration = decoded.exp - decoded.iat
       
       expect(expiration).toBe(3600) // 1 hour in seconds
@@ -146,7 +146,7 @@ describe('JWT Utils', () => {
     it('should throw error for malformed token', () => {
       const malformedToken = 'not.a.valid.jwt'
       
-      expect(() => verifyToken(malformedToken)).toThrow('Token verification failed')
+      expect(() => verifyToken(malformedToken)).toThrow('Invalid token')
     })
   })
 

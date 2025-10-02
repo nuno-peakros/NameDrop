@@ -53,9 +53,7 @@ const commonPatterns = {
 /**
  * User role enum validation
  */
-const userRoleSchema = z.enum(['user', 'admin'], {
-  errorMap: () => ({ message: 'Role must be either "user" or "admin"' }),
-})
+const userRoleSchema = z.enum(['user', 'admin'])
 
 /**
  * Authentication schemas
@@ -264,9 +262,9 @@ export function validateData<T>(
       success: true,
       data: validatedData,
     }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const errors: ValidationError[] = error.errors.map((err) => ({
+    } catch (_error) {
+    if (_error instanceof z.ZodError) {
+      const errors: ValidationError[] = _error.issues.map((err: z.ZodIssue) => ({
         field: err.path.join('.'),
         message: err.message,
       }))
@@ -309,7 +307,7 @@ export async function validateRequestBody<T>(
   try {
     const body = await request.json()
     return validateData(schema, body)
-  } catch (error) {
+    } catch {
     return {
       success: false,
       errors: [{
@@ -453,11 +451,11 @@ export function validatePasswordStrength(password: string): {
   try {
     commonPatterns.password.parse(password)
     return { isValid: true, errors: [] }
-  } catch (error) {
-    if (error instanceof z.ZodError) {
+    } catch (_error) {
+    if (_error instanceof z.ZodError) {
       return {
         isValid: false,
-        errors: error.errors.map(err => err.message),
+        errors: _error.issues.map((err: z.ZodIssue) => err.message),
       }
     }
     return { isValid: false, errors: ['Invalid password'] }

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { UserRole } from '@prisma/client'
+// import { UserRole } from '@prisma/client'
 import {
   sendPasswordResetEmail,
   resetPassword,
@@ -8,28 +8,26 @@ import {
   validateResetToken,
   cleanupExpiredResetTokens,
   getPasswordChangeHistory,
-  type PasswordResetResult,
+  // type PasswordResetResult,
 } from '@/lib/password-reset'
-
-// Mock the database
-const mockDb = {
-  user: {
-    findUnique: vi.fn(),
-    update: vi.fn(),
-  },
-  passwordResetToken: {
-    findUnique: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-  },
-  $transaction: vi.fn(),
-}
+import { db } from '@/lib/db'
 
 // Mock the database module
 vi.mock('@/lib/db', () => ({
-  db: mockDb,
+  db: {
+    user: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    passwordResetToken: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+    $transaction: vi.fn(),
+  },
 }))
 
 // Mock auth utilities
@@ -105,9 +103,9 @@ describe('Password Reset Service', () => {
   describe('sendPasswordResetEmail', () => {
     it('should send password reset email successfully', async () => {
       // Mock database responses
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
-      mockDb.passwordResetToken.create.mockResolvedValue(mockTokenRecord)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
+      vi.mocked(db).passwordResetToken.create.mockResolvedValue(mockTokenRecord)
 
       // Mock auth utilities
       const { generateSecurePassword } = await import('@/lib/auth-utils')
@@ -123,7 +121,7 @@ describe('Password Reset Service', () => {
       expect(result.message).toBe('Password reset email sent successfully')
 
       // Verify database calls
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { email: 'john@example.com' },
         select: {
           id: true,
@@ -134,13 +132,13 @@ describe('Password Reset Service', () => {
           emailVerified: true,
         },
       })
-      expect(mockDb.passwordResetToken.deleteMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.deleteMany).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
           usedAt: null,
         },
       })
-      expect(mockDb.passwordResetToken.create).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.create).toHaveBeenCalledWith({
         data: {
           userId: 'user-123',
           token: 'reset-token-123',
@@ -157,7 +155,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return success for non-existent user (security)', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await sendPasswordResetEmail('nonexistent@example.com')
 
@@ -166,7 +164,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for inactive user', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockInactiveUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockInactiveUser)
 
       const result = await sendPasswordResetEmail('john@example.com')
 
@@ -175,7 +173,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for unverified user', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUnverifiedUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUnverifiedUser)
 
       const result = await sendPasswordResetEmail('john@example.com')
 
@@ -184,7 +182,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await sendPasswordResetEmail('john@example.com')
 
@@ -195,8 +193,8 @@ describe('Password Reset Service', () => {
 
   describe('resetPassword', () => {
     it('should reset password successfully', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockTokenRecord)
-      mockDb.$transaction.mockImplementation(async (callback) => {
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockTokenRecord)
+      vi.mocked(db).$transaction.mockImplementation(async (callback) => {
         return await callback({
           user: {
             update: vi.fn().mockResolvedValue({}),
@@ -215,7 +213,7 @@ describe('Password Reset Service', () => {
       expect(result.success).toBe(true)
       expect(result.message).toBe('Password reset successfully')
 
-      expect(mockDb.passwordResetToken.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.findUnique).toHaveBeenCalledWith({
         where: { token: 'reset-token-123' },
         include: {
           user: {
@@ -234,7 +232,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for invalid token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(null)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(null)
 
       const result = await resetPassword('invalid-token', 'newPassword123')
 
@@ -243,20 +241,20 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for expired token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockExpiredTokenRecord)
-      mockDb.passwordResetToken.delete.mockResolvedValue({})
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockExpiredTokenRecord)
+      vi.mocked(db).passwordResetToken.delete.mockResolvedValue({})
 
       const result = await resetPassword('expired-token', 'newPassword123')
 
       expect(result.success).toBe(false)
       expect(result.message).toBe('Reset token has expired')
-      expect(mockDb.passwordResetToken.delete).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.delete).toHaveBeenCalledWith({
         where: { id: 'token-123' },
       })
     })
 
     it('should return error for used token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockUsedTokenRecord)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockUsedTokenRecord)
 
       const result = await resetPassword('used-token', 'newPassword123')
 
@@ -269,7 +267,7 @@ describe('Password Reset Service', () => {
         ...mockTokenRecord,
         user: mockInactiveUser,
       }
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(inactiveUserToken)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(inactiveUserToken)
 
       const result = await resetPassword('inactive-user-token', 'newPassword123')
 
@@ -282,7 +280,7 @@ describe('Password Reset Service', () => {
         ...mockTokenRecord,
         user: mockUnverifiedUser,
       }
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(unverifiedUserToken)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(unverifiedUserToken)
 
       const result = await resetPassword('unverified-user-token', 'newPassword123')
 
@@ -291,7 +289,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await resetPassword('reset-token-123', 'newPassword123')
 
@@ -302,8 +300,8 @@ describe('Password Reset Service', () => {
 
   describe('adminResetPassword', () => {
     it('should reset password as admin successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.user.update.mockResolvedValue({})
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.update.mockResolvedValue({})
 
       const { generateSecurePassword, hashPassword } = await import('@/lib/auth-utils')
       vi.mocked(generateSecurePassword).mockReturnValue('tempPassword123')
@@ -318,7 +316,7 @@ describe('Password Reset Service', () => {
       expect(result.message).toBe('Password reset successfully. Temporary password sent to user.')
       expect(result.temporaryPassword).toBe('tempPassword123')
 
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         select: {
           id: true,
@@ -329,7 +327,7 @@ describe('Password Reset Service', () => {
           emailVerified: true,
         },
       })
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: {
           passwordHash: 'hashed-temp-password',
@@ -344,7 +342,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await adminResetPassword('nonexistent-user')
 
@@ -353,7 +351,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for inactive user', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockInactiveUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockInactiveUser)
 
       const result = await adminResetPassword('user-123')
 
@@ -362,7 +360,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await adminResetPassword('user-123')
 
@@ -373,8 +371,8 @@ describe('Password Reset Service', () => {
 
   describe('changePassword', () => {
     it('should change password successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.user.update.mockResolvedValue({})
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.update.mockResolvedValue({})
 
       const { verifyPassword, hashPassword } = await import('@/lib/auth-utils')
       vi.mocked(verifyPassword).mockResolvedValue(true)
@@ -385,7 +383,7 @@ describe('Password Reset Service', () => {
       expect(result.success).toBe(true)
       expect(result.message).toBe('Password changed successfully')
 
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         select: {
           id: true,
@@ -395,7 +393,7 @@ describe('Password Reset Service', () => {
       })
       expect(verifyPassword).toHaveBeenCalledWith('currentPassword', 'hashed-password')
       expect(hashPassword).toHaveBeenCalledWith('newPassword123')
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: {
           passwordHash: 'new-hashed-password',
@@ -405,7 +403,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await changePassword('nonexistent-user', 'currentPassword', 'newPassword123')
 
@@ -414,7 +412,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for inactive user', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockInactiveUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockInactiveUser)
 
       const result = await changePassword('user-123', 'currentPassword', 'newPassword123')
 
@@ -423,7 +421,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return error for incorrect current password', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
 
       const { verifyPassword } = await import('@/lib/auth-utils')
       vi.mocked(verifyPassword).mockResolvedValue(false)
@@ -435,7 +433,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await changePassword('user-123', 'currentPassword', 'newPassword123')
 
@@ -446,7 +444,7 @@ describe('Password Reset Service', () => {
 
   describe('validateResetToken', () => {
     it('should return valid token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         usedAt: null,
@@ -464,7 +462,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return expired token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() - 60 * 60 * 1000),
         usedAt: null,
@@ -482,7 +480,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return used token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() + 60 * 60 * 1000),
         usedAt: new Date(),
@@ -500,7 +498,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return invalid status for non-existent token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(null)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(null)
 
       const result = await validateResetToken('nonexistent-token')
 
@@ -512,7 +510,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return invalid status on database error', async () => {
-      mockDb.passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await validateResetToken('error-token')
 
@@ -526,12 +524,12 @@ describe('Password Reset Service', () => {
 
   describe('cleanupExpiredResetTokens', () => {
     it('should clean up expired tokens', async () => {
-      mockDb.passwordResetToken.deleteMany.mockResolvedValue({ count: 3 })
+      vi.mocked(db).passwordResetToken.deleteMany.mockResolvedValue({ count: 3 })
 
       const result = await cleanupExpiredResetTokens()
 
       expect(result).toBe(3)
-      expect(mockDb.passwordResetToken.deleteMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.deleteMany).toHaveBeenCalledWith({
         where: {
           expiresAt: {
             lt: expect.any(Date),
@@ -541,7 +539,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return 0 on database error', async () => {
-      mockDb.passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
 
       const result = await cleanupExpiredResetTokens()
 
@@ -554,7 +552,7 @@ describe('Password Reset Service', () => {
       const userWithPasswordChange = {
         passwordChangedAt: new Date('2023-01-01T00:00:00Z'),
       }
-      mockDb.user.findUnique.mockResolvedValue(userWithPasswordChange)
+      vi.mocked(db).user.findUnique.mockResolvedValue(userWithPasswordChange)
 
       const result = await getPasswordChangeHistory('user-123')
 
@@ -568,7 +566,7 @@ describe('Password Reset Service', () => {
       const userWithoutPasswordChange = {
         passwordChangedAt: null,
       }
-      mockDb.user.findUnique.mockResolvedValue(userWithoutPasswordChange)
+      vi.mocked(db).user.findUnique.mockResolvedValue(userWithoutPasswordChange)
 
       const result = await getPasswordChangeHistory('user-123')
 
@@ -579,7 +577,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return needs change for non-existent user', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await getPasswordChangeHistory('nonexistent-user')
 
@@ -590,7 +588,7 @@ describe('Password Reset Service', () => {
     })
 
     it('should return needs change on database error', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await getPasswordChangeHistory('user-123')
 

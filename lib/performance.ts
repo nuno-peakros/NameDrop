@@ -11,13 +11,13 @@
 /**
  * Web Vitals metrics
  */
-interface WebVitals {
-  name: string
-  value: number
-  delta: number
-  id: string
-  navigationType: string
-}
+// interface WebVitals {
+//   name: string
+//   value: number
+//   delta: number
+//   id: string
+//   navigationType: string
+// }
 
 /**
  * Performance metrics
@@ -77,15 +77,19 @@ class PerformanceObserver {
 
     // First Input Delay
     this.observeMetric('first-input', (entry) => {
-      this.metrics.fid = entry.processingStart - entry.startTime
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const fidEntry = entry as any
+      this.metrics.fid = fidEntry.processingStart - fidEntry.startTime
       this.reportMetric('FID', this.metrics.fid)
     })
 
     // Cumulative Layout Shift
     this.observeMetric('layout-shift', (entry) => {
-      if (!entry.hadRecentInput) {
-        this.metrics.cls = (this.metrics.cls || 0) + entry.value
-        this.reportMetric('CLS', this.metrics.cls)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const clsEntry = entry as any
+      if (!clsEntry.hadRecentInput) {
+        this.metrics.cls = (this.metrics.cls || 0) + clsEntry.value
+        this.reportMetric('CLS', this.metrics.cls || 0)
       }
     })
   }
@@ -117,7 +121,7 @@ class PerformanceObserver {
   /**
    * Observe a specific performance metric
    */
-  private observeMetric(type: string, callback: (entry: any) => void) {
+  private observeMetric(type: string, callback: (entry: PerformanceEntry) => void) {
     if (typeof window === 'undefined') return
 
     try {
@@ -128,7 +132,8 @@ class PerformanceObserver {
       })
       
       observer.observe({ type, buffered: true })
-      this.observers.push(observer)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      this.observers.push(observer as any)
     } catch (error) {
       console.warn(`Failed to observe ${type}:`, error)
     }
@@ -152,8 +157,8 @@ class PerformanceObserver {
    */
   private sendToAnalytics(name: string, value: number) {
     // Example: Send to Google Analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'web_vitals', {
+    if (typeof window !== 'undefined' && (window as unknown as { gtag: unknown }).gtag) {
+      (window as unknown as { gtag: (event: string, name: string, data: Record<string, unknown>) => void }).gtag('event', 'web_vitals', {
         event_category: 'Performance',
         event_label: name,
         value: Math.round(value),
@@ -162,8 +167,8 @@ class PerformanceObserver {
     }
 
     // Example: Send to custom analytics
-    if (typeof window !== 'undefined' && (window as any).analytics) {
-      (window as any).analytics.track('Performance Metric', {
+    if (typeof window !== 'undefined' && (window as unknown as { analytics: unknown }).analytics) {
+      (window as unknown as { analytics: { track: (event: string, data: Record<string, unknown>) => void } }).analytics.track('Performance Metric', {
         metric: name,
         value: value,
         timestamp: Date.now(),
@@ -182,7 +187,10 @@ class PerformanceObserver {
    * Clean up observers
    */
   dispose() {
-    this.observers.forEach(observer => observer.disconnect())
+    this.observers.forEach(observer => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (observer as any).disconnect()
+    })
     this.observers = []
   }
 }

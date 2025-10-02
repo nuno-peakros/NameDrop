@@ -27,7 +27,7 @@ const mockPerformance = {
 }
 
 // Mock PerformanceObserver
-const mockPerformanceObserver = vi.fn().mockImplementation((callback) => ({
+const mockPerformanceObserver = vi.fn().mockImplementation(() => ({
   observe: vi.fn(),
   disconnect: vi.fn(),
 }))
@@ -57,6 +57,9 @@ describe('Performance Monitoring', () => {
 
   describe('measureFunction', () => {
     it('should measure function execution time', () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+      
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       
       const result = measureFunction('testFunction', () => {
@@ -69,6 +72,7 @@ describe('Performance Monitoring', () => {
       )
       
       consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
     })
 
     it('should measure function execution time in development', () => {
@@ -104,6 +108,9 @@ describe('Performance Monitoring', () => {
 
   describe('measureAsyncFunction', () => {
     it('should measure async function execution time', async () => {
+      const originalEnv = process.env.NODE_ENV
+      process.env.NODE_ENV = 'development'
+      
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
       
       const result = await measureAsyncFunction('testAsyncFunction', async () => {
@@ -116,6 +123,7 @@ describe('Performance Monitoring', () => {
       )
       
       consoleSpy.mockRestore()
+      process.env.NODE_ENV = originalEnv
     })
 
     it('should handle async function errors', async () => {
@@ -179,14 +187,14 @@ describe('Performance Monitoring', () => {
     })
 
     it('should return false when performance is not available', () => {
-      // @ts-ignore
+      // @ts-expect-error - Mocking performance API for testing
       delete window.performance
       
       expect(isPerformanceMonitoringSupported()).toBe(false)
     })
 
     it('should return false when PerformanceObserver is not available', () => {
-      // @ts-ignore
+      // @ts-expect-error - Mocking performance API for testing
       delete window.PerformanceObserver
       
       expect(isPerformanceMonitoringSupported()).toBe(false)
@@ -201,7 +209,7 @@ describe('Performance Monitoring', () => {
     })
 
     it('should not initialize when performance monitoring is not supported', () => {
-      // @ts-ignore
+      // @ts-expect-error - Mocking performance API for testing
       delete window.performance
       
       const result = initializePerformanceMonitoring()

@@ -30,18 +30,18 @@ describe('Authentication API Contracts', () => {
     updatedAt: new Date(),
   }
 
-  const mockAdmin: Omit<User, 'passwordHash'> = {
-    id: 'test-admin-id',
-    firstName: 'Admin',
-    lastName: 'User',
-    email: 'admin@example.com',
-    role: UserRole.admin,
-    isActive: true,
-    emailVerified: true,
-    passwordChangedAt: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
+  // const mockAdmin: Omit<User, 'passwordHash'> = {
+  //   id: 'test-admin-id',
+  //   firstName: 'Admin',
+  //   lastName: 'User',
+  //   email: 'admin@example.com',
+  //   role: UserRole.admin,
+  //   isActive: true,
+  //   emailVerified: true,
+  //   passwordChangedAt: new Date(),
+  //   createdAt: new Date(),
+  //   updatedAt: new Date(),
+  // }
 
   beforeEach(() => {
     // Setup test environment
@@ -53,10 +53,10 @@ describe('Authentication API Contracts', () => {
 
   describe('POST /api/auth/login', () => {
     it('should return success response with user data and token', async () => {
-      const requestBody = {
-        email: 'john.doe@example.com',
-        password: 'validPassword123',
-      }
+      // const requestBody = {
+      //   email: 'john.doe@example.com',
+      //   password: 'validPassword123',
+      // }
 
       const expectedResponse = {
         success: true,
@@ -97,10 +97,10 @@ describe('Authentication API Contracts', () => {
     })
 
     it('should return error response for invalid credentials', async () => {
-      const requestBody = {
-        email: 'john.doe@example.com',
-        password: 'wrongPassword',
-      }
+      // const requestBody = {
+      //   email: 'john.doe@example.com',
+      //   password: 'wrongPassword',
+      // }
 
       const expectedResponse = {
         success: false,
@@ -198,9 +198,9 @@ describe('Authentication API Contracts', () => {
 
   describe('POST /api/auth/verify-email', () => {
     it('should return success response for valid verification token', async () => {
-      const requestBody = {
-        token: 'valid-verification-token',
-      }
+      // const requestBody = {
+      //   token: 'valid-verification-token',
+      // }
 
       const expectedResponse = {
         success: true,
@@ -214,9 +214,9 @@ describe('Authentication API Contracts', () => {
 
   describe('POST /api/auth/forgot-password', () => {
     it('should return success response for valid email', async () => {
-      const requestBody = {
-        email: 'john.doe@example.com',
-      }
+      // const requestBody = {
+      //   email: 'john.doe@example.com',
+      // }
 
       const expectedResponse = {
         success: true,
@@ -230,10 +230,10 @@ describe('Authentication API Contracts', () => {
 
   describe('POST /api/auth/reset-password', () => {
     it('should return success response for valid reset token', async () => {
-      const requestBody = {
-        token: 'valid-reset-token',
-        newPassword: 'newPassword123',
-      }
+      // const requestBody = {
+      //   token: 'valid-reset-token',
+      //   newPassword: 'newPassword123',
+      // }
 
       const expectedResponse = {
         success: true,
@@ -247,10 +247,10 @@ describe('Authentication API Contracts', () => {
 
   describe('POST /api/auth/change-password', () => {
     it('should return success response for valid password change', async () => {
-      const requestBody = {
-        currentPassword: 'currentPassword123',
-        newPassword: 'newPassword123',
-      }
+      // const requestBody = {
+      //   currentPassword: 'currentPassword123',
+      //   newPassword: 'newPassword123',
+      // }
 
       const expectedResponse = {
         success: true,

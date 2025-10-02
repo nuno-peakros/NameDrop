@@ -4,7 +4,47 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { db } from '@/lib/db'
 import { config } from '@/lib/config'
 import bcrypt from 'bcryptjs'
-import { User } from '@prisma/client'
+// import { User } from '@prisma/client' // Unused import
+
+// Type for user without password hash
+// type UserWithoutPassword = Omit<User, 'passwordHash'> // Unused type
+
+// Extend NextAuth types
+declare module 'next-auth' {
+  interface User {
+    id: string
+    firstName: string
+    lastName: string
+    email: string
+    role: string
+    isActive: boolean
+    emailVerified: boolean | Date | null
+    passwordChangedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+  }
+  
+  interface Session {
+    user: {
+      id: string
+      email: string
+      firstName: string
+      lastName: string
+      role: string
+      emailVerified: boolean
+      passwordChangedAt: Date | null
+    }
+  }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id: string
+    role: string
+    emailVerified: boolean | Date | null
+    passwordChangedAt: Date | null
+  }
+}
 
 /**
  * NextAuth.js configuration for NameDrop authentication
@@ -39,7 +79,7 @@ export const authOptions: NextAuthOptions = {
        * @param credentials - User credentials
        * @returns User object if valid, null if invalid
        */
-      async authorize(credentials): Promise<User | null> {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
@@ -75,7 +115,8 @@ export const authOptions: NextAuthOptions = {
           }
 
           // Return user without password hash
-          const { passwordHash, ...userWithoutPassword } = user
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { passwordHash: _passwordHash, ...userWithoutPassword } = user
           return userWithoutPassword
         } catch (error) {
           console.error('Authentication error:', error)
@@ -106,7 +147,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id
         token.role = user.role
-        token.emailVerified = user.emailVerified
+        token.emailVerified = !!user.emailVerified
         token.passwordChangedAt = user.passwordChangedAt
       }
       return token
@@ -123,7 +164,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string
         session.user.role = token.role as string
         session.user.emailVerified = token.emailVerified as boolean
-        session.user.passwordChangedAt = token.passwordChangedAt as string | null
+        session.user.passwordChangedAt = token.passwordChangedAt as Date | null
       }
       return session
     }

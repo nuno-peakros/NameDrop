@@ -4,6 +4,7 @@
  * Query Database with Original Credentials
  */
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const { PrismaClient } = require('@prisma/client');
 
 async function queryDatabase() {

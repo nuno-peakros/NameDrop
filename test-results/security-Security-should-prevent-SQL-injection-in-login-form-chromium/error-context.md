@@ -1,0 +1,25 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - img "NameDrop Logo" [ref=e7]
+      - generic [ref=e8]: Welcome back
+      - generic [ref=e9]: Sign in to your account to continue
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]: Email
+          - textbox "Email" [active] [ref=e14]: admin' OR '1'='1
+        - generic [ref=e15]:
+          - generic [ref=e16]: Password
+          - textbox "Password" [ref=e17]: password' OR '1'='1
+        - button "Sign in" [ref=e18]
+      - paragraph [ref=e20]:
+        - text: Don't have an account?
+        - button "Contact administrator" [ref=e21]
+  - button "Open Next.js Dev Tools" [ref=e27] [cursor=pointer]:
+    - img [ref=e28] [cursor=pointer]
+  - alert [ref=e31]
+```

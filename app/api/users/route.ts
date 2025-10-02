@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAllUsers, searchUsers, createUser } from '@/lib/user-service'
+import { searchUsers, createUser } from '@/lib/user-service'
 import { validateQueryParams, validateRequestBody, createValidationErrorResponse } from '@/lib/validation'
 import { userSchemas } from '@/lib/validation'
 import { getSessionFromToken, isAdmin } from '@/lib/auth-service'

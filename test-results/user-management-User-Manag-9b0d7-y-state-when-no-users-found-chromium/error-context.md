@@ -1,0 +1,141 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [active]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]:
+          - navigation [ref=e7]:
+            - button "previous" [disabled] [ref=e8]:
+              - img "previous" [ref=e9]
+            - generic [ref=e11]:
+              - generic [ref=e12]: 1/
+              - generic [ref=e13]: "1"
+            - button "next" [disabled] [ref=e14]:
+              - img "next" [ref=e15]
+          - img
+        - generic [ref=e17]:
+          - generic [ref=e18]:
+            - img [ref=e19]
+            - generic "Latest available version is detected (15.5.4)." [ref=e21]: Next.js 15.5.4
+            - generic [ref=e22]: Turbopack
+          - img
+      - dialog "Runtime Error" [ref=e24]:
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e31]: Runtime Error
+              - generic [ref=e32]:
+                - button "Copy Error Info" [ref=e33] [cursor=pointer]:
+                  - img [ref=e34] [cursor=pointer]
+                - button "No related documentation found" [disabled] [ref=e36]:
+                  - img [ref=e37]
+                - link "Learn more about enabling Node.js inspector for server code with Chrome DevTools" [ref=e39] [cursor=pointer]:
+                  - /url: https://nextjs.org/docs/app/building-your-application/configuring/debugging#server-side-code
+                  - img [ref=e40] [cursor=pointer]
+            - paragraph [ref=e49]: No QueryClient set, use QueryClientProvider to set one
+          - generic [ref=e51]:
+            - paragraph [ref=e53]:
+              - text: Call Stack
+              - generic [ref=e54]: "14"
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - text: useQueryClient
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e57] [cursor=pointer]:
+                  - img [ref=e58] [cursor=pointer]
+              - generic [ref=e60]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_06e27b9c._.js (1963:15)
+            - generic [ref=e61]:
+              - generic [ref=e62]:
+                - text: UserManagement
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e63] [cursor=pointer]:
+                  - img [ref=e64] [cursor=pointer]
+              - generic [ref=e66]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/components_7aebd6ff._.js (2448:233)
+            - generic [ref=e67]:
+              - generic [ref=e68]:
+                - text: Object.react_stack_bottom_frame
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e69] [cursor=pointer]:
+                  - img [ref=e70] [cursor=pointer]
+              - generic [ref=e72]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (13072:24)
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - text: renderWithHooks
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e75] [cursor=pointer]:
+                  - img [ref=e76] [cursor=pointer]
+              - generic [ref=e78]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (4091:24)
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - text: updateFunctionComponent
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e81] [cursor=pointer]:
+                  - img [ref=e82] [cursor=pointer]
+              - generic [ref=e84]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (5523:21)
+            - generic [ref=e85]:
+              - generic [ref=e86]:
+                - text: beginWork
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e87] [cursor=pointer]:
+                  - img [ref=e88] [cursor=pointer]
+              - generic [ref=e90]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (6090:639)
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - text: runWithFiberInDEV
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e93] [cursor=pointer]:
+                  - img [ref=e94] [cursor=pointer]
+              - generic [ref=e96]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (886:74)
+            - generic [ref=e97]:
+              - generic [ref=e98]:
+                - text: performUnitOfWork
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e99] [cursor=pointer]:
+                  - img [ref=e100] [cursor=pointer]
+              - generic [ref=e102]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8298:97)
+            - generic [ref=e103]:
+              - generic [ref=e104]:
+                - text: workLoopSync
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e105] [cursor=pointer]:
+                  - img [ref=e106] [cursor=pointer]
+              - generic [ref=e108]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8190:40)
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - text: renderRootSync
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e111] [cursor=pointer]:
+                  - img [ref=e112] [cursor=pointer]
+              - generic [ref=e114]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8173:13)
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - text: performWorkOnRoot
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e117] [cursor=pointer]:
+                  - img [ref=e118] [cursor=pointer]
+              - generic [ref=e120]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (7932:56)
+            - generic [ref=e121]:
+              - generic [ref=e122]:
+                - text: performWorkOnRootViaSchedulerTask
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e123] [cursor=pointer]:
+                  - img [ref=e124] [cursor=pointer]
+              - generic [ref=e126]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js (8882:9)
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - text: MessagePort.performWorkUntilDeadline
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e129] [cursor=pointer]:
+                  - img [ref=e130] [cursor=pointer]
+              - generic [ref=e132]: file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/static/chunks/node_modules_next_dist_compiled_5150ccfd._.js (2601:64)
+            - generic [ref=e133]:
+              - generic [ref=e134]:
+                - text: UsersPage
+                - button "Sourcemapping failed. Click to log cause of error." [ref=e135] [cursor=pointer]:
+                  - img [ref=e136] [cursor=pointer]
+              - generic [ref=e138]: about:/Server/file:///Users/nuno-peakros/Documents/Peakros%20OS/namedrop/.next/server/chunks/ssr/%5Broot-of-the-server%5D__5d9e1cbc._.js (77:270)
+        - generic [ref=e139]:
+          - generic [ref=e140]: "1"
+          - generic [ref=e141]: "2"
+    - generic [ref=e146] [cursor=pointer]:
+      - button "Open Next.js Dev Tools" [ref=e147] [cursor=pointer]:
+        - img [ref=e148] [cursor=pointer]
+      - generic [ref=e151] [cursor=pointer]:
+        - button "Open issues overlay" [ref=e152] [cursor=pointer]:
+          - generic [ref=e153] [cursor=pointer]:
+            - generic [ref=e154] [cursor=pointer]: "0"
+            - generic [ref=e155] [cursor=pointer]: "1"
+          - generic [ref=e156] [cursor=pointer]: Issue
+        - button "Collapse issues badge" [ref=e157] [cursor=pointer]:
+          - img [ref=e158] [cursor=pointer]
+  - 'heading "Application error: a client-side exception has occurred while loading localhost (see the browser console for more information)." [level=2] [ref=e162]'
+```

@@ -1,0 +1,107 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - generic [ref=e5]:
+          - img "NameDrop Logo" [ref=e7]
+          - navigation [ref=e8]:
+            - button "Dashboard" [ref=e9]
+            - button "Users" [ref=e10]
+            - button "Analytics" [ref=e11]
+            - button "Settings" [ref=e12]
+        - button "D Demo Administrator admin@namedrop.com" [ref=e14]:
+          - generic [ref=e16]: D
+          - generic [ref=e17]:
+            - paragraph [ref=e18]: Demo Administrator
+            - paragraph [ref=e19]: admin@namedrop.com
+          - img
+    - main [ref=e20]:
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - heading "Performance Monitor" [level=1] [ref=e24]
+            - paragraph [ref=e25]: Monitor and analyze application performance metrics
+          - generic [ref=e26]: Real-time
+        - generic [ref=e27]:
+          - generic [ref=e29]:
+            - generic [ref=e30]:
+              - generic [ref=e32]: Core Web Vitals
+              - generic [ref=e33]:
+                - generic [ref=e34]:
+                  - generic [ref=e35]: First Contentful Paint (FCP)
+                  - generic [ref=e36]:
+                    - generic [ref=e37]: Poor
+                    - generic [ref=e38]: 4.10s
+                - generic [ref=e39]:
+                  - generic [ref=e40]: Largest Contentful Paint (LCP)
+                  - generic [ref=e41]:
+                    - generic [ref=e42]: Poor
+                    - generic [ref=e43]: 4.10s
+                - generic [ref=e44]:
+                  - generic [ref=e45]: Cumulative Layout Shift (CLS)
+                  - generic [ref=e46]:
+                    - generic [ref=e47]: Needs Improvement
+                    - generic [ref=e48]: "0.150"
+            - generic [ref=e49]:
+              - generic [ref=e51]: Bundle Size
+              - generic [ref=e52]:
+                - generic [ref=e53]:
+                  - generic [ref=e54]: JavaScript
+                  - generic [ref=e55]: 778.04 KB
+                - generic [ref=e56]:
+                  - generic [ref=e57]: CSS
+                  - generic [ref=e58]: 16.7 KB
+                - generic [ref=e59]:
+                  - generic [ref=e60]: Total
+                  - generic [ref=e61]: 794.75 KB
+            - generic [ref=e62]:
+              - generic [ref=e64]: Performance Score
+              - generic [ref=e66]:
+                - generic [ref=e67]: F
+                - paragraph [ref=e68]: Based on Core Web Vitals
+                - button "Refresh Metrics" [ref=e69]
+          - generic [ref=e70]:
+            - generic [ref=e72]: Performance Tips
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - heading "Optimize Images" [level=4] [ref=e75]
+                - paragraph [ref=e76]: Use WebP/AVIF formats and proper sizing to reduce image load times.
+              - generic [ref=e77]:
+                - heading "Code Splitting" [level=4] [ref=e78]
+                - paragraph [ref=e79]: Implement dynamic imports to reduce initial bundle size.
+              - generic [ref=e80]:
+                - heading "Caching" [level=4] [ref=e81]
+                - paragraph [ref=e82]: Leverage browser caching and CDN for static assets.
+              - generic [ref=e83]:
+                - heading "Lazy Loading" [level=4] [ref=e84]
+                - paragraph [ref=e85]: Load components and images only when needed.
+          - generic [ref=e86]:
+            - generic [ref=e88]: Performance Standards
+            - generic [ref=e89]:
+              - generic [ref=e90]:
+                - generic [ref=e91]:
+                  - generic [ref=e92]: FCP
+                  - generic [ref=e93]: ≤ 1.8s
+                - paragraph [ref=e94]: First Contentful Paint
+              - generic [ref=e95]:
+                - generic [ref=e96]:
+                  - generic [ref=e97]: LCP
+                  - generic [ref=e98]: ≤ 2.5s
+                - paragraph [ref=e99]: Largest Contentful Paint
+              - generic [ref=e100]:
+                - generic [ref=e101]:
+                  - generic [ref=e102]: FID
+                  - generic [ref=e103]: ≤ 100ms
+                - paragraph [ref=e104]: First Input Delay
+              - generic [ref=e105]:
+                - generic [ref=e106]:
+                  - generic [ref=e107]: CLS
+                  - generic [ref=e108]: ≤ 0.1
+                - paragraph [ref=e109]: Cumulative Layout Shift
+  - button "Open Next.js Dev Tools" [ref=e115] [cursor=pointer]:
+    - img [ref=e116] [cursor=pointer]
+  - alert [ref=e119]
+```

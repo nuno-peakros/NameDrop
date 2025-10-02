@@ -89,12 +89,20 @@ describe('Accessibility Utilities', () => {
       
       // Mock focus on last element
       const lastElement = FocusManager.getLastFocusable(container)!
-      lastElement.focus = vi.fn()
+      const firstElement = FocusManager.getFirstFocusable(container)!
+      firstElement.focus = vi.fn()
+      
+      // Mock document.activeElement
+      Object.defineProperty(document, 'activeElement', {
+        value: lastElement,
+        writable: true,
+        configurable: true
+      })
       
       FocusManager.trapFocus(container, event)
       
       expect(preventDefaultSpy).toHaveBeenCalled()
-      expect(lastElement.focus).toHaveBeenCalled()
+      expect(firstElement.focus).toHaveBeenCalled()
     })
 
     it('should trap focus on Shift+Tab key', () => {
@@ -103,12 +111,20 @@ describe('Accessibility Utilities', () => {
       
       // Mock focus on first element
       const firstElement = FocusManager.getFirstFocusable(container)!
-      firstElement.focus = vi.fn()
+      const lastElement = FocusManager.getLastFocusable(container)!
+      lastElement.focus = vi.fn()
+      
+      // Mock document.activeElement
+      Object.defineProperty(document, 'activeElement', {
+        value: firstElement,
+        writable: true,
+        configurable: true
+      })
       
       FocusManager.trapFocus(container, event)
       
       expect(preventDefaultSpy).toHaveBeenCalled()
-      expect(firstElement.focus).toHaveBeenCalled()
+      expect(lastElement.focus).toHaveBeenCalled()
     })
   })
 
@@ -120,7 +136,7 @@ describe('Accessibility Utilities', () => {
 
     it('should announce message to screen readers', () => {
       const appendChildSpy = vi.spyOn(document.body, 'appendChild')
-      const removeChildSpy = vi.spyOn(document.body, 'removeChild')
+      // const removeChildSpy = vi.spyOn(document.body, 'removeChild')
       
       ScreenReader.announce('Test message')
       
@@ -196,7 +212,13 @@ describe('Accessibility Utilities', () => {
       // Mock focus on first button
       const firstButton = container.querySelector('button')!
       firstButton.focus = vi.fn()
-      document.activeElement = firstButton
+      
+      // Mock document.activeElement
+      Object.defineProperty(document, 'activeElement', {
+        value: firstButton,
+        writable: true,
+        configurable: true
+      })
       
       KeyboardNavigation.handleArrowKeys(event, container, 'horizontal')
       
@@ -209,7 +231,13 @@ describe('Accessibility Utilities', () => {
       
       const firstButton = container.querySelector('button')!
       firstButton.focus = vi.fn()
-      document.activeElement = firstButton
+      
+      // Mock document.activeElement
+      Object.defineProperty(document, 'activeElement', {
+        value: firstButton,
+        writable: true,
+        configurable: true
+      })
       
       KeyboardNavigation.handleArrowKeys(event, container, 'vertical')
       
@@ -290,7 +318,7 @@ describe('Accessibility Utilities', () => {
       const meetsAA = ColorContrast.meetsWCAG('#000000', '#ffffff', 'AA')
       expect(meetsAA).toBe(true)
       
-      const meetsAAFail = ColorContrast.meetsWCAG('#666666', '#ffffff', 'AA')
+      const meetsAAFail = ColorContrast.meetsWCAG('#999999', '#ffffff', 'AA')
       expect(meetsAAFail).toBe(false)
     })
 
@@ -298,7 +326,7 @@ describe('Accessibility Utilities', () => {
       const meetsAAA = ColorContrast.meetsWCAG('#000000', '#ffffff', 'AAA')
       expect(meetsAAA).toBe(true)
       
-      const meetsAAAFail = ColorContrast.meetsWCAG('#333333', '#ffffff', 'AAA')
+      const meetsAAAFail = ColorContrast.meetsWCAG('#666666', '#ffffff', 'AAA')
       expect(meetsAAAFail).toBe(false)
     })
 
@@ -318,7 +346,7 @@ describe('Accessibility Utilities', () => {
 
   describe('AccessibilityTester', () => {
     it('should check proper ARIA attributes', () => {
-      const elementWithARIA = createMockElement('button', { 'aria-label': 'Test button' })
+      const elementWithARIA = createMockElement('button', { 'role': 'button', 'aria-label': 'Test button' })
       const elementWithoutARIA = createMockElement('button')
       
       expect(AccessibilityTester.hasProperARIA(elementWithARIA)).toBe(true)

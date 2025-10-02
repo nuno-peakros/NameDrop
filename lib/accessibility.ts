@@ -39,7 +39,6 @@ export const ARIA_ROLES = {
   SLIDER: 'slider',
   SPINBUTTON: 'spinbutton',
   SWITCH: 'switch',
-  TABLIST: 'tablist',
   TOOLTIP: 'tooltip',
 } as const
 
@@ -379,7 +378,7 @@ export class AccessibilityTester {
     const role = element.getAttribute('role')
     const ariaLabel = element.getAttribute('aria-label')
     const ariaLabelledBy = element.getAttribute('aria-labelledby')
-    const ariaDescribedBy = element.getAttribute('aria-describedby')
+    // const ariaDescribedBy = element.getAttribute('aria-describedby')
     
     // Check if element has proper labeling
     if (role && !ariaLabel && !ariaLabelledBy) {

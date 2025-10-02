@@ -117,7 +117,7 @@ function UserFilters({
    * Get active filters
    */
   const activeFilters: ActiveFilter[] = Object.entries(filters)
-    .filter(([_, value]) => value !== undefined && value !== '')
+    .filter(([, value]) => value !== undefined && value !== '')
     .map(([key, value]) => ({
       key,
       value: String(value),
@@ -185,8 +185,9 @@ function UserFilters({
                 size="sm"
                 onClick={clearAllFilters}
                 className="text-xs"
+                aria-label="Clear filters"
               >
-                Clear all
+                Clear filters
               </Button>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -217,7 +218,7 @@ function UserFilters({
           <div className="space-y-2">
             <label className="text-sm font-medium">Role</label>
             <Select
-              value={filters.role || 'all'}
+              value={String(filters.role || 'all')}
               onValueChange={(value) => handleFilterChange('role', value)}
             >
               <SelectTrigger>
@@ -287,7 +288,7 @@ function UserFilters({
               <div className="space-y-2">
                 <label className="text-sm font-medium">Date Range</label>
                 <Select
-                  value={filters.dateRange || 'all'}
+                  value={String(filters.dateRange || 'all')}
                   onValueChange={(value) => handleFilterChange('dateRange', value)}
                 >
                   <SelectTrigger>
@@ -308,7 +309,7 @@ function UserFilters({
               <div className="space-y-2">
                 <label className="text-sm font-medium">Sort By</label>
                 <Select
-                  value={filters.sortBy || 'name'}
+                  value={String(filters.sortBy || 'name')}
                   onValueChange={(value) => handleFilterChange('sortBy', value)}
                 >
                   <SelectTrigger>

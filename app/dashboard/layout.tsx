@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { 
   DropdownMenu, 
@@ -65,7 +66,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           {/* Left side - Logo and Menu */}
           <div className="flex items-center space-x-6">
             <div className="flex items-center">
-              <img 
+              <Image 
                 src="/logo.svg" 
                 alt="NameDrop Logo" 
                 width={180} 

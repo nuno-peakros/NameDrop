@@ -16,21 +16,19 @@ import {
   type UserSearchFilters,
   type PaginationParams,
 } from '@/lib/user-service'
-
-// Mock the database
-const mockDb = {
-  user: {
-    findUnique: vi.fn(),
-    findMany: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    count: vi.fn(),
-  },
-}
+import { db } from '@/lib/db'
 
 // Mock the database module
 vi.mock('@/lib/db', () => ({
-  db: mockDb,
+  db: {
+    user: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      count: vi.fn(),
+    },
+  },
 }))
 
 // Mock auth utilities
@@ -97,8 +95,8 @@ describe('User Service', () => {
 
     it('should create user successfully', async () => {
       // Mock database responses
-      mockDb.user.findUnique.mockResolvedValue(null) // No existing user
-      mockDb.user.create.mockResolvedValue({
+      vi.mocked(db).user.findUnique.mockResolvedValue(null) // No existing user
+      vi.mocked(db).user.create.mockResolvedValue({
         id: 'user-123',
         firstName: 'John',
         lastName: 'Doe',
@@ -126,10 +124,10 @@ describe('User Service', () => {
       expect(result.message).toBe('User created successfully')
 
       // Verify database calls
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { email: 'john@example.com' },
       })
-      expect(mockDb.user.create).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.create).toHaveBeenCalledWith({
         data: {
           firstName: 'John',
           lastName: 'Doe',
@@ -160,7 +158,7 @@ describe('User Service', () => {
     })
 
     it('should return error if email already exists', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
 
       const result = await createUser(createUserData)
 
@@ -170,8 +168,8 @@ describe('User Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
-      mockDb.user.create.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.create.mockRejectedValue(new Error('Database error'))
 
       const result = await createUser(createUserData)
 
@@ -183,7 +181,7 @@ describe('User Service', () => {
 
   describe('getUserById', () => {
     it('should get user by ID successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
 
       const result = await getUserById('user-123')
 
@@ -191,7 +189,7 @@ describe('User Service', () => {
       expect(result.data).toEqual(mockUser)
       expect(result.message).toBe('User retrieved successfully')
 
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         select: {
           id: true,
@@ -209,7 +207,7 @@ describe('User Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await getUserById('nonexistent-id')
 
@@ -219,7 +217,7 @@ describe('User Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await getUserById('user-123')
 
@@ -231,7 +229,7 @@ describe('User Service', () => {
 
   describe('getUserByEmail', () => {
     it('should get user by email successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
 
       const result = await getUserByEmail('john@example.com')
 
@@ -239,7 +237,7 @@ describe('User Service', () => {
       expect(result.data).toEqual(mockUser)
       expect(result.message).toBe('User retrieved successfully')
 
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { email: 'john@example.com' },
         select: {
           id: true,
@@ -257,7 +255,7 @@ describe('User Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await getUserByEmail('nonexistent@example.com')
 
@@ -274,8 +272,8 @@ describe('User Service', () => {
     }
 
     it('should update user successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.user.update.mockResolvedValue({
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.update.mockResolvedValue({
         ...mockUser,
         ...updateData,
         updatedAt: new Date('2023-01-02T00:00:00Z'),
@@ -288,7 +286,7 @@ describe('User Service', () => {
       expect(result.data?.lastName).toBe('Smith')
       expect(result.message).toBe('User updated successfully')
 
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: updateData,
         select: {
@@ -305,7 +303,7 @@ describe('User Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await updateUser('nonexistent-id', updateData)
 
@@ -315,7 +313,7 @@ describe('User Service', () => {
     })
 
     it('should return error if email already exists', async () => {
-      mockDb.user.findUnique
+      vi.mocked(db).user.findUnique
         .mockResolvedValueOnce(mockUser) // User exists
         .mockResolvedValueOnce(mockAdminUser) // Email exists
 
@@ -327,8 +325,8 @@ describe('User Service', () => {
     })
 
     it('should allow updating email to same email', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.user.update.mockResolvedValue({
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.update.mockResolvedValue({
         ...mockUser,
         updatedAt: new Date('2023-01-02T00:00:00Z'),
       })
@@ -336,28 +334,28 @@ describe('User Service', () => {
       const result = await updateUser('user-123', { email: 'john@example.com' })
 
       expect(result.success).toBe(true)
-      expect(mockDb.user.findUnique).toHaveBeenCalledTimes(1) // Only check if user exists
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledTimes(1) // Only check if user exists
     })
   })
 
   describe('deactivateUser', () => {
     it('should deactivate user successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.user.update.mockResolvedValue({ ...mockUser, isActive: false })
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.update.mockResolvedValue({ ...mockUser, isActive: false })
 
       const result = await deactivateUser('user-123')
 
       expect(result.success).toBe(true)
       expect(result.message).toBe('User deactivated successfully')
 
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: { isActive: false },
       })
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await deactivateUser('nonexistent-id')
 
@@ -367,7 +365,7 @@ describe('User Service', () => {
     })
 
     it('should return error if user already deactivated', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
 
       const result = await deactivateUser('user-123')
 
@@ -379,22 +377,22 @@ describe('User Service', () => {
 
   describe('reactivateUser', () => {
     it('should reactivate user successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
-      mockDb.user.update.mockResolvedValue({ ...mockUser, isActive: true })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
+      vi.mocked(db).user.update.mockResolvedValue({ ...mockUser, isActive: true })
 
       const result = await reactivateUser('user-123')
 
       expect(result.success).toBe(true)
       expect(result.message).toBe('User reactivated successfully')
 
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: { isActive: true },
       })
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await reactivateUser('nonexistent-id')
 
@@ -404,7 +402,7 @@ describe('User Service', () => {
     })
 
     it('should return error if user already active', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
 
       const result = await reactivateUser('user-123')
 
@@ -427,8 +425,8 @@ describe('User Service', () => {
     }
 
     it('should search users successfully', async () => {
-      mockDb.user.count.mockResolvedValue(1)
-      mockDb.user.findMany.mockResolvedValue([mockUser])
+      vi.mocked(db).user.count.mockResolvedValue(1)
+      vi.mocked(db).user.findMany.mockResolvedValue([mockUser])
 
       const result = await searchUsers(filters, pagination)
 
@@ -443,7 +441,7 @@ describe('User Service', () => {
         hasPrev: false,
       })
 
-      expect(mockDb.user.findMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findMany).toHaveBeenCalledWith({
         where: {
           OR: [
             { firstName: { contains: 'john', mode: 'insensitive' } },
@@ -471,8 +469,8 @@ describe('User Service', () => {
     })
 
     it('should handle empty search results', async () => {
-      mockDb.user.count.mockResolvedValue(0)
-      mockDb.user.findMany.mockResolvedValue([])
+      vi.mocked(db).user.count.mockResolvedValue(0)
+      vi.mocked(db).user.findMany.mockResolvedValue([])
 
       const result = await searchUsers(filters, pagination)
 
@@ -482,8 +480,8 @@ describe('User Service', () => {
     })
 
     it('should handle pagination correctly', async () => {
-      mockDb.user.count.mockResolvedValue(50)
-      mockDb.user.findMany.mockResolvedValue([])
+      vi.mocked(db).user.count.mockResolvedValue(50)
+      vi.mocked(db).user.findMany.mockResolvedValue([])
 
       const result = await searchUsers({}, { page: 2, limit: 10 })
 
@@ -496,7 +494,7 @@ describe('User Service', () => {
         hasPrev: true,
       })
 
-      expect(mockDb.user.findMany).toHaveBeenCalledWith(
+      expect(vi.mocked(db).user.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 10, // (page - 1) * limit
           take: 10,
@@ -505,7 +503,7 @@ describe('User Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.count.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.count.mockRejectedValue(new Error('Database error'))
 
       const result = await searchUsers(filters, pagination)
 
@@ -517,14 +515,14 @@ describe('User Service', () => {
 
   describe('getAllUsers', () => {
     it('should get all users', async () => {
-      mockDb.user.count.mockResolvedValue(2)
-      mockDb.user.findMany.mockResolvedValue([mockUser, mockAdminUser])
+      vi.mocked(db).user.count.mockResolvedValue(2)
+      vi.mocked(db).user.findMany.mockResolvedValue([mockUser, mockAdminUser])
 
       const result = await getAllUsers({ page: 1, limit: 20 })
 
       expect(result.success).toBe(true)
       expect(result.data?.users).toHaveLength(2)
-      expect(mockDb.user.findMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findMany).toHaveBeenCalledWith({
         where: {},
         select: expect.any(Object),
         orderBy: { createdAt: 'desc' },
@@ -536,19 +534,19 @@ describe('User Service', () => {
 
   describe('userExists', () => {
     it('should return true if user exists', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ id: 'user-123' })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ id: 'user-123' })
 
       const result = await userExists('john@example.com')
 
       expect(result).toBe(true)
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { email: 'john@example.com' },
         select: { id: true },
       })
     })
 
     it('should return false if user does not exist', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await userExists('nonexistent@example.com')
 
@@ -556,7 +554,7 @@ describe('User Service', () => {
     })
 
     it('should return false on database error', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await userExists('john@example.com')
 
@@ -566,7 +564,7 @@ describe('User Service', () => {
 
   describe('getUserStats', () => {
     it('should return user statistics', async () => {
-      mockDb.user.count
+      vi.mocked(db).user.count
         .mockResolvedValueOnce(100) // totalUsers
         .mockResolvedValueOnce(80)  // activeUsers
         .mockResolvedValueOnce(70)  // verifiedUsers
@@ -581,15 +579,15 @@ describe('User Service', () => {
         adminUsers: 5,
       })
 
-      expect(mockDb.user.count).toHaveBeenCalledTimes(4)
-      expect(mockDb.user.count).toHaveBeenCalledWith()
-      expect(mockDb.user.count).toHaveBeenCalledWith({ where: { isActive: true } })
-      expect(mockDb.user.count).toHaveBeenCalledWith({ where: { emailVerified: true } })
-      expect(mockDb.user.count).toHaveBeenCalledWith({ where: { role: 'admin' } })
+      expect(vi.mocked(db).user.count).toHaveBeenCalledTimes(4)
+      expect(vi.mocked(db).user.count).toHaveBeenCalledWith()
+      expect(vi.mocked(db).user.count).toHaveBeenCalledWith({ where: { isActive: true } })
+      expect(vi.mocked(db).user.count).toHaveBeenCalledWith({ where: { emailVerified: true } })
+      expect(vi.mocked(db).user.count).toHaveBeenCalledWith({ where: { role: 'admin' } })
     })
 
     it('should return zero stats on database error', async () => {
-      mockDb.user.count.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.count.mockRejectedValue(new Error('Database error'))
 
       const result = await getUserStats()
 

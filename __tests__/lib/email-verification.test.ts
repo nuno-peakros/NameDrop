@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { UserRole } from '@prisma/client'
+// import { UserRole } from '@prisma/client'
 import {
   sendVerificationEmail,
   verifyEmail,
@@ -7,27 +7,25 @@ import {
   needsEmailVerification,
   cleanupExpiredTokens,
   getTokenStatus,
-  type EmailVerificationResult,
+  // type EmailVerificationResult,
 } from '@/lib/email-verification'
-
-// Mock the database
-const mockDb = {
-  user: {
-    findUnique: vi.fn(),
-    update: vi.fn(),
-  },
-  passwordResetToken: {
-    findUnique: vi.fn(),
-    create: vi.fn(),
-    update: vi.fn(),
-    delete: vi.fn(),
-    deleteMany: vi.fn(),
-  },
-}
+import { db } from '@/lib/db'
 
 // Mock the database module
 vi.mock('@/lib/db', () => ({
-  db: mockDb,
+  db: {
+    user: {
+      findUnique: vi.fn(),
+      update: vi.fn(),
+    },
+    passwordResetToken: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      deleteMany: vi.fn(),
+    },
+  },
 }))
 
 // Mock auth utilities
@@ -93,9 +91,9 @@ describe('Email Verification Service', () => {
   describe('sendVerificationEmail', () => {
     it('should send verification email successfully', async () => {
       // Mock database responses
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: false })
-      mockDb.passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
-      mockDb.passwordResetToken.create.mockResolvedValue(mockTokenRecord)
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: false })
+      vi.mocked(db).passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
+      vi.mocked(db).passwordResetToken.create.mockResolvedValue(mockTokenRecord)
 
       // Mock auth utilities
       const { generateSecurePassword } = await import('@/lib/auth-utils')
@@ -111,17 +109,17 @@ describe('Email Verification Service', () => {
       expect(result.message).toBe('Verification email sent successfully')
 
       // Verify database calls
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         select: { emailVerified: true },
       })
-      expect(mockDb.passwordResetToken.deleteMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.deleteMany).toHaveBeenCalledWith({
         where: {
           userId: 'user-123',
           usedAt: null,
         },
       })
-      expect(mockDb.passwordResetToken.create).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.create).toHaveBeenCalledWith({
         data: {
           userId: 'user-123',
           token: 'verification-token-123',
@@ -138,7 +136,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await sendVerificationEmail(mockUser)
 
@@ -147,7 +145,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error if email already verified', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: true })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: true })
 
       const result = await sendVerificationEmail(mockUser)
 
@@ -156,8 +154,8 @@ describe('Email Verification Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: false })
-      mockDb.passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: false })
+      vi.mocked(db).passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
 
       const result = await sendVerificationEmail(mockUser)
 
@@ -168,9 +166,9 @@ describe('Email Verification Service', () => {
 
   describe('verifyEmail', () => {
     it('should verify email successfully', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockTokenRecord)
-      mockDb.passwordResetToken.update.mockResolvedValue(mockUsedTokenRecord)
-      mockDb.user.update.mockResolvedValue(mockVerifiedUser)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockTokenRecord)
+      vi.mocked(db).passwordResetToken.update.mockResolvedValue(mockUsedTokenRecord)
+      vi.mocked(db).user.update.mockResolvedValue(mockVerifiedUser)
 
       const result = await verifyEmail('verification-token-123')
 
@@ -179,7 +177,7 @@ describe('Email Verification Service', () => {
       expect(result.user).toEqual(mockVerifiedUser)
 
       // Verify database calls
-      expect(mockDb.passwordResetToken.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.findUnique).toHaveBeenCalledWith({
         where: { token: 'verification-token-123' },
         include: {
           user: {
@@ -194,11 +192,11 @@ describe('Email Verification Service', () => {
           },
         },
       })
-      expect(mockDb.passwordResetToken.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.update).toHaveBeenCalledWith({
         where: { id: 'token-123' },
         data: { usedAt: expect.any(Date) },
       })
-      expect(mockDb.user.update).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.update).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         data: { emailVerified: true },
         select: {
@@ -212,7 +210,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error for invalid token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(null)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(null)
 
       const result = await verifyEmail('invalid-token')
 
@@ -221,20 +219,20 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error for expired token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockExpiredTokenRecord)
-      mockDb.passwordResetToken.delete.mockResolvedValue({})
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockExpiredTokenRecord)
+      vi.mocked(db).passwordResetToken.delete.mockResolvedValue({})
 
       const result = await verifyEmail('expired-token')
 
       expect(result.success).toBe(false)
       expect(result.message).toBe('Verification token has expired')
-      expect(mockDb.passwordResetToken.delete).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.delete).toHaveBeenCalledWith({
         where: { id: 'token-123' },
       })
     })
 
     it('should return error for used token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(mockUsedTokenRecord)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(mockUsedTokenRecord)
 
       const result = await verifyEmail('used-token')
 
@@ -247,7 +245,7 @@ describe('Email Verification Service', () => {
         ...mockTokenRecord,
         user: { ...mockUser, isActive: false },
       }
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(inactiveUserToken)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(inactiveUserToken)
 
       const result = await verifyEmail('inactive-user-token')
 
@@ -260,7 +258,7 @@ describe('Email Verification Service', () => {
         ...mockTokenRecord,
         user: mockVerifiedUser,
       }
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(verifiedUserToken)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(verifiedUserToken)
 
       const result = await verifyEmail('verified-user-token')
 
@@ -269,7 +267,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should handle database errors', async () => {
-      mockDb.passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await verifyEmail('verification-token-123')
 
@@ -280,9 +278,9 @@ describe('Email Verification Service', () => {
 
   describe('resendVerificationEmail', () => {
     it('should resend verification email successfully', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockUser)
-      mockDb.passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
-      mockDb.passwordResetToken.create.mockResolvedValue(mockTokenRecord)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockUser)
+      vi.mocked(db).passwordResetToken.deleteMany.mockResolvedValue({ count: 0 })
+      vi.mocked(db).passwordResetToken.create.mockResolvedValue(mockTokenRecord)
 
       const { generateSecurePassword } = await import('@/lib/auth-utils')
       vi.mocked(generateSecurePassword).mockReturnValue('verification-token-123')
@@ -295,7 +293,7 @@ describe('Email Verification Service', () => {
       expect(result.success).toBe(true)
       expect(result.message).toBe('Verification email sent successfully')
 
-      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+      expect(vi.mocked(db).user.findUnique).toHaveBeenCalledWith({
         where: { id: 'user-123' },
         select: {
           id: true,
@@ -309,7 +307,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await resendVerificationEmail('nonexistent-user')
 
@@ -318,7 +316,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error if user inactive', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ ...mockUser, isActive: false })
 
       const result = await resendVerificationEmail('user-123')
 
@@ -327,7 +325,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return error if email already verified', async () => {
-      mockDb.user.findUnique.mockResolvedValue(mockVerifiedUser)
+      vi.mocked(db).user.findUnique.mockResolvedValue(mockVerifiedUser)
 
       const result = await resendVerificationEmail('user-123')
 
@@ -338,7 +336,7 @@ describe('Email Verification Service', () => {
 
   describe('needsEmailVerification', () => {
     it('should return true for unverified active user', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: false, isActive: true })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: false, isActive: true })
 
       const result = await needsEmailVerification('user-123')
 
@@ -346,7 +344,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return false for verified user', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: true, isActive: true })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: true, isActive: true })
 
       const result = await needsEmailVerification('user-123')
 
@@ -354,7 +352,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return false for inactive user', async () => {
-      mockDb.user.findUnique.mockResolvedValue({ emailVerified: false, isActive: false })
+      vi.mocked(db).user.findUnique.mockResolvedValue({ emailVerified: false, isActive: false })
 
       const result = await needsEmailVerification('user-123')
 
@@ -362,7 +360,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return false if user not found', async () => {
-      mockDb.user.findUnique.mockResolvedValue(null)
+      vi.mocked(db).user.findUnique.mockResolvedValue(null)
 
       const result = await needsEmailVerification('nonexistent-user')
 
@@ -370,7 +368,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return false on database error', async () => {
-      mockDb.user.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).user.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await needsEmailVerification('user-123')
 
@@ -380,12 +378,12 @@ describe('Email Verification Service', () => {
 
   describe('cleanupExpiredTokens', () => {
     it('should clean up expired tokens', async () => {
-      mockDb.passwordResetToken.deleteMany.mockResolvedValue({ count: 5 })
+      vi.mocked(db).passwordResetToken.deleteMany.mockResolvedValue({ count: 5 })
 
       const result = await cleanupExpiredTokens()
 
       expect(result).toBe(5)
-      expect(mockDb.passwordResetToken.deleteMany).toHaveBeenCalledWith({
+      expect(vi.mocked(db).passwordResetToken.deleteMany).toHaveBeenCalledWith({
         where: {
           expiresAt: {
             lt: expect.any(Date),
@@ -395,7 +393,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return 0 on database error', async () => {
-      mockDb.passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.deleteMany.mockRejectedValue(new Error('Database error'))
 
       const result = await cleanupExpiredTokens()
 
@@ -405,7 +403,7 @@ describe('Email Verification Service', () => {
 
   describe('getTokenStatus', () => {
     it('should return valid token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         usedAt: null,
@@ -423,7 +421,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return expired token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
         usedAt: null,
@@ -441,7 +439,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return used token status', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue({
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue({
         userId: 'user-123',
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
         usedAt: new Date(),
@@ -459,7 +457,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return invalid status for non-existent token', async () => {
-      mockDb.passwordResetToken.findUnique.mockResolvedValue(null)
+      vi.mocked(db).passwordResetToken.findUnique.mockResolvedValue(null)
 
       const result = await getTokenStatus('nonexistent-token')
 
@@ -471,7 +469,7 @@ describe('Email Verification Service', () => {
     })
 
     it('should return invalid status on database error', async () => {
-      mockDb.passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
+      vi.mocked(db).passwordResetToken.findUnique.mockRejectedValue(new Error('Database error'))
 
       const result = await getTokenStatus('error-token')
 

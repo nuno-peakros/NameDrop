@@ -73,7 +73,7 @@ export function generateToken(user: Pick<User, 'id' | 'email' | 'role' | 'emailV
       expiresIn,
       algorithm: JWT_CONFIG.ALGORITHM,
     })
-  } catch (error) {
+    } catch (error) {
     throw new Error(`Failed to generate token: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
@@ -119,13 +119,13 @@ export function verifyToken(token: string): TokenPayload {
     }) as TokenPayload
 
     return payload
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
+    } catch (_error) {
+    if (_error instanceof jwt.TokenExpiredError) {
       throw new Error('Token has expired')
-    } else if (error instanceof jwt.JsonWebTokenError) {
+    } else if (_error instanceof jwt.JsonWebTokenError) {
       throw new Error('Invalid token')
     } else {
-      throw new Error(`Token verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Token verification failed: ${_error instanceof Error ? _error.message : 'Unknown error'}`)
     }
   }
 }
@@ -146,8 +146,8 @@ export function decodeToken(token: string): TokenPayload | null {
   try {
     const decoded = jwt.decode(token) as TokenPayload
     return decoded
-  } catch (error) {
-    console.error('Token decode error:', error)
+    } catch (_error) {
+    console.error('Token decode error:', _error)
     return null
   }
 }
@@ -172,7 +172,7 @@ export function isTokenExpired(token: string): boolean {
 
     const now = Math.floor(Date.now() / 1000)
     return payload.exp < now
-  } catch (error) {
+    } catch {
     return true
   }
 }
@@ -197,7 +197,7 @@ export function getTokenExpiration(token: string): Date | null {
     if (!payload) return null
 
     return new Date(payload.exp * 1000)
-  } catch (error) {
+    } catch {
     return null
   }
 }
@@ -257,17 +257,18 @@ export function refreshToken(user: Pick<User, 'id' | 'email' | 'role' | 'emailVe
  * }
  * ```
  */
-export function validateTokenPayload(payload: any): payload is TokenPayload {
+export function validateTokenPayload(payload: unknown): payload is TokenPayload {
+  if (typeof payload !== 'object' || payload === null) return false;
+  const obj = payload as Record<string, unknown>;
   return (
-    payload &&
-    typeof payload.id === 'string' &&
-    typeof payload.email === 'string' &&
-    typeof payload.role === 'string' &&
-    typeof payload.emailVerified === 'boolean' &&
-    (payload.passwordChangedAt === null || typeof payload.passwordChangedAt === 'string') &&
-    typeof payload.iat === 'number' &&
-    typeof payload.exp === 'number'
-  )
+    typeof obj.id === 'string' &&
+    typeof obj.email === 'string' &&
+    typeof obj.role === 'string' &&
+    typeof obj.emailVerified === 'boolean' &&
+    (obj.passwordChangedAt === null || typeof obj.passwordChangedAt === 'string') &&
+    typeof obj.iat === 'number' &&
+    typeof obj.exp === 'number'
+  );
 }
 
 /**
@@ -293,7 +294,7 @@ export function getTokenTimeLeft(token: string): number {
     const timeLeft = payload.exp - now
 
     return Math.max(0, timeLeft)
-  } catch (error) {
+    } catch {
     return 0
   }
 }
@@ -397,10 +398,10 @@ export async function validateToken(token: string): Promise<TokenValidationResul
         role: payload.role
       }
     }
-  } catch (error) {
+    } catch (_error) {
     return {
       isValid: false,
-      error: error instanceof Error ? error.message : 'Token validation failed'
+      error: _error instanceof Error ? _error.message : 'Token validation failed'
     }
   }
 }

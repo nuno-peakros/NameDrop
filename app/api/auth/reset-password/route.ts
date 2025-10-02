@@ -48,13 +48,16 @@ export async function POST(request: NextRequest) {
     const resetResult = await resetPassword(token, newPassword)
 
     if (!resetResult.success) {
-      const statusCode = resetResult.error === 'INVALID_TOKEN' || resetResult.error === 'TOKEN_EXPIRED' ? 400 : 500
+      const isClientError = resetResult.message === 'Invalid reset token' || 
+                           resetResult.message === 'Reset token has expired' ||
+                           resetResult.message === 'Reset token has already been used'
+      const statusCode = isClientError ? 400 : 500
       
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: resetResult.error || 'RESET_PASSWORD_FAILED',
+            code: isClientError ? 'INVALID_TOKEN' : 'RESET_PASSWORD_FAILED',
             message: resetResult.message,
           },
         },

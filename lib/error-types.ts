@@ -1,0 +1,481 @@
+/**
+ * Error Types and Constants for NameDrop
+ * 
+ * This module defines:
+ * - Error codes and their meanings
+ * - Error messages and templates
+ * - Error classification mappings
+ * - Error response formats
+ * 
+ * @example
+ * ```typescript
+ * import { ERROR_CODES, ERROR_MESSAGES } from '@/lib/error-types';
+ * 
+ * throw new AppError(
+ *   ERROR_MESSAGES.USER_NOT_FOUND,
+ *   ERROR_CODES.USER_NOT_FOUND,
+ *   404
+ * );
+ * ```
+ */
+
+/**
+ * Standard error codes used throughout the application
+ */
+export const ERROR_CODES = {
+  // Validation errors
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INVALID_EMAIL: 'INVALID_EMAIL',
+  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_TOKEN: 'INVALID_TOKEN',
+  MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
+  INVALID_FORMAT: 'INVALID_FORMAT',
+  
+  // Authentication errors
+  AUTHENTICATION_ERROR: 'AUTHENTICATION_ERROR',
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  TOKEN_EXPIRED: 'TOKEN_EXPIRED',
+  INVALID_CREDENTIALS: 'INVALID_CREDENTIALS',
+  ACCOUNT_INACTIVE: 'ACCOUNT_INACTIVE',
+  EMAIL_NOT_VERIFIED: 'EMAIL_NOT_VERIFIED',
+  
+  // Authorization errors
+  AUTHORIZATION_ERROR: 'AUTHORIZATION_ERROR',
+  INSUFFICIENT_PERMISSIONS: 'INSUFFICIENT_PERMISSIONS',
+  FORBIDDEN: 'FORBIDDEN',
+  ADMIN_REQUIRED: 'ADMIN_REQUIRED',
+  
+  // Not found errors
+  NOT_FOUND: 'NOT_FOUND',
+  USER_NOT_FOUND: 'USER_NOT_FOUND',
+  RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
+  ENDPOINT_NOT_FOUND: 'ENDPOINT_NOT_FOUND',
+  
+  // Conflict errors
+  CONFLICT: 'CONFLICT',
+  EMAIL_EXISTS: 'EMAIL_EXISTS',
+  RESOURCE_EXISTS: 'RESOURCE_EXISTS',
+  DUPLICATE_ENTRY: 'DUPLICATE_ENTRY',
+  
+  // Rate limiting errors
+  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
+  TOO_MANY_REQUESTS: 'TOO_MANY_REQUESTS',
+  LOGIN_ATTEMPTS_EXCEEDED: 'LOGIN_ATTEMPTS_EXCEEDED',
+  
+  // External service errors
+  EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
+  EMAIL_SERVICE_ERROR: 'EMAIL_SERVICE_ERROR',
+  DATABASE_CONNECTION_ERROR: 'DATABASE_CONNECTION_ERROR',
+  API_SERVICE_ERROR: 'API_SERVICE_ERROR',
+  
+  // Database errors
+  DATABASE_ERROR: 'DATABASE_ERROR',
+  QUERY_FAILED: 'QUERY_FAILED',
+  TRANSACTION_FAILED: 'TRANSACTION_FAILED',
+  CONNECTION_POOL_ERROR: 'CONNECTION_POOL_ERROR',
+  
+  // Network errors
+  NETWORK_ERROR: 'NETWORK_ERROR',
+  TIMEOUT: 'TIMEOUT',
+  CONNECTION_REFUSED: 'CONNECTION_REFUSED',
+  DNS_ERROR: 'DNS_ERROR',
+  
+  // Internal errors
+  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+  CONFIGURATION_ERROR: 'CONFIGURATION_ERROR',
+  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
+} as const;
+
+/**
+ * Error message templates
+ */
+export const ERROR_MESSAGES = {
+  // Validation messages
+  VALIDATION_ERROR: 'Validation failed',
+  INVALID_EMAIL: 'Invalid email format',
+  INVALID_PASSWORD: 'Password does not meet requirements',
+  INVALID_TOKEN: 'Invalid or expired token',
+  MISSING_REQUIRED_FIELD: 'Required field is missing',
+  INVALID_FORMAT: 'Invalid data format',
+  
+  // Authentication messages
+  AUTHENTICATION_ERROR: 'Authentication failed',
+  UNAUTHORIZED: 'Authorization token required',
+  TOKEN_EXPIRED: 'Token has expired',
+  INVALID_CREDENTIALS: 'Invalid email or password',
+  ACCOUNT_INACTIVE: 'Account is inactive',
+  EMAIL_NOT_VERIFIED: 'Email address not verified',
+  
+  // Authorization messages
+  AUTHORIZATION_ERROR: 'Authorization failed',
+  INSUFFICIENT_PERMISSIONS: 'Insufficient permissions',
+  FORBIDDEN: 'Access forbidden',
+  ADMIN_REQUIRED: 'Admin access required',
+  
+  // Not found messages
+  NOT_FOUND: 'Resource not found',
+  USER_NOT_FOUND: 'User not found',
+  RESOURCE_NOT_FOUND: 'Requested resource not found',
+  ENDPOINT_NOT_FOUND: 'API endpoint not found',
+  
+  // Conflict messages
+  CONFLICT: 'Resource conflict',
+  EMAIL_EXISTS: 'Email address already exists',
+  RESOURCE_EXISTS: 'Resource already exists',
+  DUPLICATE_ENTRY: 'Duplicate entry detected',
+  
+  // Rate limiting messages
+  RATE_LIMIT_EXCEEDED: 'Rate limit exceeded',
+  TOO_MANY_REQUESTS: 'Too many requests',
+  LOGIN_ATTEMPTS_EXCEEDED: 'Too many login attempts',
+  
+  // External service messages
+  EXTERNAL_SERVICE_ERROR: 'External service error',
+  EMAIL_SERVICE_ERROR: 'Email service unavailable',
+  DATABASE_CONNECTION_ERROR: 'Database connection failed',
+  API_SERVICE_ERROR: 'API service error',
+  
+  // Database messages
+  DATABASE_ERROR: 'Database error',
+  QUERY_FAILED: 'Database query failed',
+  TRANSACTION_FAILED: 'Database transaction failed',
+  CONNECTION_POOL_ERROR: 'Database connection pool error',
+  
+  // Network messages
+  NETWORK_ERROR: 'Network error',
+  TIMEOUT: 'Request timeout',
+  CONNECTION_REFUSED: 'Connection refused',
+  DNS_ERROR: 'DNS resolution failed',
+  
+  // Internal messages
+  INTERNAL_ERROR: 'Internal server error',
+  UNKNOWN_ERROR: 'An unexpected error occurred',
+  CONFIGURATION_ERROR: 'Configuration error',
+  SERVICE_UNAVAILABLE: 'Service temporarily unavailable',
+} as const;
+
+/**
+ * HTTP status codes for error types
+ */
+export const ERROR_STATUS_CODES = {
+  [ERROR_CODES.VALIDATION_ERROR]: 400,
+  [ERROR_CODES.INVALID_EMAIL]: 400,
+  [ERROR_CODES.INVALID_PASSWORD]: 400,
+  [ERROR_CODES.INVALID_TOKEN]: 400,
+  [ERROR_CODES.MISSING_REQUIRED_FIELD]: 400,
+  [ERROR_CODES.INVALID_FORMAT]: 400,
+  
+  [ERROR_CODES.AUTHENTICATION_ERROR]: 401,
+  [ERROR_CODES.UNAUTHORIZED]: 401,
+  [ERROR_CODES.TOKEN_EXPIRED]: 401,
+  [ERROR_CODES.INVALID_CREDENTIALS]: 401,
+  [ERROR_CODES.ACCOUNT_INACTIVE]: 401,
+  [ERROR_CODES.EMAIL_NOT_VERIFIED]: 401,
+  
+  [ERROR_CODES.AUTHORIZATION_ERROR]: 403,
+  [ERROR_CODES.INSUFFICIENT_PERMISSIONS]: 403,
+  [ERROR_CODES.FORBIDDEN]: 403,
+  [ERROR_CODES.ADMIN_REQUIRED]: 403,
+  
+  [ERROR_CODES.NOT_FOUND]: 404,
+  [ERROR_CODES.USER_NOT_FOUND]: 404,
+  [ERROR_CODES.RESOURCE_NOT_FOUND]: 404,
+  [ERROR_CODES.ENDPOINT_NOT_FOUND]: 404,
+  
+  [ERROR_CODES.CONFLICT]: 409,
+  [ERROR_CODES.EMAIL_EXISTS]: 409,
+  [ERROR_CODES.RESOURCE_EXISTS]: 409,
+  [ERROR_CODES.DUPLICATE_ENTRY]: 409,
+  
+  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: 429,
+  [ERROR_CODES.TOO_MANY_REQUESTS]: 429,
+  [ERROR_CODES.LOGIN_ATTEMPTS_EXCEEDED]: 429,
+  
+  [ERROR_CODES.EXTERNAL_SERVICE_ERROR]: 502,
+  [ERROR_CODES.EMAIL_SERVICE_ERROR]: 502,
+  [ERROR_CODES.DATABASE_CONNECTION_ERROR]: 502,
+  [ERROR_CODES.API_SERVICE_ERROR]: 502,
+  
+  [ERROR_CODES.DATABASE_ERROR]: 500,
+  [ERROR_CODES.QUERY_FAILED]: 500,
+  [ERROR_CODES.TRANSACTION_FAILED]: 500,
+  [ERROR_CODES.CONNECTION_POOL_ERROR]: 500,
+  
+  [ERROR_CODES.NETWORK_ERROR]: 503,
+  [ERROR_CODES.TIMEOUT]: 503,
+  [ERROR_CODES.CONNECTION_REFUSED]: 503,
+  [ERROR_CODES.DNS_ERROR]: 503,
+  
+  [ERROR_CODES.INTERNAL_ERROR]: 500,
+  [ERROR_CODES.UNKNOWN_ERROR]: 500,
+  [ERROR_CODES.CONFIGURATION_ERROR]: 500,
+  [ERROR_CODES.SERVICE_UNAVAILABLE]: 503,
+} as const;
+
+/**
+ * Error severity levels
+ */
+export const ERROR_SEVERITY = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high',
+  CRITICAL: 'critical',
+} as const;
+
+/**
+ * Error categories
+ */
+export const ERROR_CATEGORIES = {
+  VALIDATION: 'validation',
+  AUTHENTICATION: 'authentication',
+  AUTHORIZATION: 'authorization',
+  NOT_FOUND: 'not_found',
+  CONFLICT: 'conflict',
+  RATE_LIMIT: 'rate_limit',
+  EXTERNAL_SERVICE: 'external_service',
+  DATABASE: 'database',
+  INTERNAL: 'internal',
+  NETWORK: 'network',
+} as const;
+
+/**
+ * Error code to category mapping
+ */
+export const ERROR_CODE_CATEGORIES = {
+  [ERROR_CODES.VALIDATION_ERROR]: ERROR_CATEGORIES.VALIDATION,
+  [ERROR_CODES.INVALID_EMAIL]: ERROR_CATEGORIES.VALIDATION,
+  [ERROR_CODES.INVALID_PASSWORD]: ERROR_CATEGORIES.VALIDATION,
+  [ERROR_CODES.INVALID_TOKEN]: ERROR_CATEGORIES.VALIDATION,
+  [ERROR_CODES.MISSING_REQUIRED_FIELD]: ERROR_CATEGORIES.VALIDATION,
+  [ERROR_CODES.INVALID_FORMAT]: ERROR_CATEGORIES.VALIDATION,
+  
+  [ERROR_CODES.AUTHENTICATION_ERROR]: ERROR_CATEGORIES.AUTHENTICATION,
+  [ERROR_CODES.UNAUTHORIZED]: ERROR_CATEGORIES.AUTHENTICATION,
+  [ERROR_CODES.TOKEN_EXPIRED]: ERROR_CATEGORIES.AUTHENTICATION,
+  [ERROR_CODES.INVALID_CREDENTIALS]: ERROR_CATEGORIES.AUTHENTICATION,
+  [ERROR_CODES.ACCOUNT_INACTIVE]: ERROR_CATEGORIES.AUTHENTICATION,
+  [ERROR_CODES.EMAIL_NOT_VERIFIED]: ERROR_CATEGORIES.AUTHENTICATION,
+  
+  [ERROR_CODES.AUTHORIZATION_ERROR]: ERROR_CATEGORIES.AUTHORIZATION,
+  [ERROR_CODES.INSUFFICIENT_PERMISSIONS]: ERROR_CATEGORIES.AUTHORIZATION,
+  [ERROR_CODES.FORBIDDEN]: ERROR_CATEGORIES.AUTHORIZATION,
+  [ERROR_CODES.ADMIN_REQUIRED]: ERROR_CATEGORIES.AUTHORIZATION,
+  
+  [ERROR_CODES.NOT_FOUND]: ERROR_CATEGORIES.NOT_FOUND,
+  [ERROR_CODES.USER_NOT_FOUND]: ERROR_CATEGORIES.NOT_FOUND,
+  [ERROR_CODES.RESOURCE_NOT_FOUND]: ERROR_CATEGORIES.NOT_FOUND,
+  [ERROR_CODES.ENDPOINT_NOT_FOUND]: ERROR_CATEGORIES.NOT_FOUND,
+  
+  [ERROR_CODES.CONFLICT]: ERROR_CATEGORIES.CONFLICT,
+  [ERROR_CODES.EMAIL_EXISTS]: ERROR_CATEGORIES.CONFLICT,
+  [ERROR_CODES.RESOURCE_EXISTS]: ERROR_CATEGORIES.CONFLICT,
+  [ERROR_CODES.DUPLICATE_ENTRY]: ERROR_CATEGORIES.CONFLICT,
+  
+  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: ERROR_CATEGORIES.RATE_LIMIT,
+  [ERROR_CODES.TOO_MANY_REQUESTS]: ERROR_CATEGORIES.RATE_LIMIT,
+  [ERROR_CODES.LOGIN_ATTEMPTS_EXCEEDED]: ERROR_CATEGORIES.RATE_LIMIT,
+  
+  [ERROR_CODES.EXTERNAL_SERVICE_ERROR]: ERROR_CATEGORIES.EXTERNAL_SERVICE,
+  [ERROR_CODES.EMAIL_SERVICE_ERROR]: ERROR_CATEGORIES.EXTERNAL_SERVICE,
+  [ERROR_CODES.DATABASE_CONNECTION_ERROR]: ERROR_CATEGORIES.EXTERNAL_SERVICE,
+  [ERROR_CODES.API_SERVICE_ERROR]: ERROR_CATEGORIES.EXTERNAL_SERVICE,
+  
+  [ERROR_CODES.DATABASE_ERROR]: ERROR_CATEGORIES.DATABASE,
+  [ERROR_CODES.QUERY_FAILED]: ERROR_CATEGORIES.DATABASE,
+  [ERROR_CODES.TRANSACTION_FAILED]: ERROR_CATEGORIES.DATABASE,
+  [ERROR_CODES.CONNECTION_POOL_ERROR]: ERROR_CATEGORIES.DATABASE,
+  
+  [ERROR_CODES.NETWORK_ERROR]: ERROR_CATEGORIES.NETWORK,
+  [ERROR_CODES.TIMEOUT]: ERROR_CATEGORIES.NETWORK,
+  [ERROR_CODES.CONNECTION_REFUSED]: ERROR_CATEGORIES.NETWORK,
+  [ERROR_CODES.DNS_ERROR]: ERROR_CATEGORIES.NETWORK,
+  
+  [ERROR_CODES.INTERNAL_ERROR]: ERROR_CATEGORIES.INTERNAL,
+  [ERROR_CODES.UNKNOWN_ERROR]: ERROR_CATEGORIES.INTERNAL,
+  [ERROR_CODES.CONFIGURATION_ERROR]: ERROR_CATEGORIES.INTERNAL,
+  [ERROR_CODES.SERVICE_UNAVAILABLE]: ERROR_CATEGORIES.INTERNAL,
+} as const;
+
+/**
+ * Error code to severity mapping
+ */
+export const ERROR_CODE_SEVERITY = {
+  [ERROR_CODES.VALIDATION_ERROR]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.INVALID_EMAIL]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.INVALID_PASSWORD]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.INVALID_TOKEN]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.MISSING_REQUIRED_FIELD]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.INVALID_FORMAT]: ERROR_SEVERITY.LOW,
+  
+  [ERROR_CODES.AUTHENTICATION_ERROR]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.UNAUTHORIZED]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.TOKEN_EXPIRED]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.INVALID_CREDENTIALS]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.ACCOUNT_INACTIVE]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.EMAIL_NOT_VERIFIED]: ERROR_SEVERITY.MEDIUM,
+  
+  [ERROR_CODES.AUTHORIZATION_ERROR]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.INSUFFICIENT_PERMISSIONS]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.FORBIDDEN]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.ADMIN_REQUIRED]: ERROR_SEVERITY.MEDIUM,
+  
+  [ERROR_CODES.NOT_FOUND]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.USER_NOT_FOUND]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.RESOURCE_NOT_FOUND]: ERROR_SEVERITY.LOW,
+  [ERROR_CODES.ENDPOINT_NOT_FOUND]: ERROR_SEVERITY.LOW,
+  
+  [ERROR_CODES.CONFLICT]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.EMAIL_EXISTS]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.RESOURCE_EXISTS]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.DUPLICATE_ENTRY]: ERROR_SEVERITY.MEDIUM,
+  
+  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.TOO_MANY_REQUESTS]: ERROR_SEVERITY.MEDIUM,
+  [ERROR_CODES.LOGIN_ATTEMPTS_EXCEEDED]: ERROR_SEVERITY.MEDIUM,
+  
+  [ERROR_CODES.EXTERNAL_SERVICE_ERROR]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.EMAIL_SERVICE_ERROR]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.DATABASE_CONNECTION_ERROR]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.API_SERVICE_ERROR]: ERROR_SEVERITY.HIGH,
+  
+  [ERROR_CODES.DATABASE_ERROR]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.QUERY_FAILED]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.TRANSACTION_FAILED]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.CONNECTION_POOL_ERROR]: ERROR_SEVERITY.HIGH,
+  
+  [ERROR_CODES.NETWORK_ERROR]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.TIMEOUT]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.CONNECTION_REFUSED]: ERROR_SEVERITY.HIGH,
+  [ERROR_CODES.DNS_ERROR]: ERROR_SEVERITY.HIGH,
+  
+  [ERROR_CODES.INTERNAL_ERROR]: ERROR_SEVERITY.CRITICAL,
+  [ERROR_CODES.UNKNOWN_ERROR]: ERROR_SEVERITY.CRITICAL,
+  [ERROR_CODES.CONFIGURATION_ERROR]: ERROR_SEVERITY.CRITICAL,
+  [ERROR_CODES.SERVICE_UNAVAILABLE]: ERROR_SEVERITY.CRITICAL,
+} as const;
+
+/**
+ * Retryable error codes
+ */
+export const RETRYABLE_ERROR_CODES = [
+  ERROR_CODES.NETWORK_ERROR,
+  ERROR_CODES.TIMEOUT,
+  ERROR_CODES.CONNECTION_REFUSED,
+  ERROR_CODES.DNS_ERROR,
+  ERROR_CODES.EXTERNAL_SERVICE_ERROR,
+  ERROR_CODES.EMAIL_SERVICE_ERROR,
+  ERROR_CODES.API_SERVICE_ERROR,
+  ERROR_CODES.DATABASE_CONNECTION_ERROR,
+  ERROR_CODES.CONNECTION_POOL_ERROR,
+  ERROR_CODES.SERVICE_UNAVAILABLE,
+] as const;
+
+/**
+ * User-friendly error messages for display
+ */
+export const USER_FRIENDLY_MESSAGES = {
+  [ERROR_CODES.VALIDATION_ERROR]: 'Please check your input and try again',
+  [ERROR_CODES.INVALID_EMAIL]: 'Please enter a valid email address',
+  [ERROR_CODES.INVALID_PASSWORD]: 'Password must be at least 8 characters with uppercase, lowercase, and number',
+  [ERROR_CODES.INVALID_TOKEN]: 'Your session has expired. Please log in again',
+  [ERROR_CODES.MISSING_REQUIRED_FIELD]: 'Please fill in all required fields',
+  [ERROR_CODES.INVALID_FORMAT]: 'Please check the format of your input',
+  
+  [ERROR_CODES.AUTHENTICATION_ERROR]: 'Please log in to continue',
+  [ERROR_CODES.UNAUTHORIZED]: 'Please log in to continue',
+  [ERROR_CODES.TOKEN_EXPIRED]: 'Your session has expired. Please log in again',
+  [ERROR_CODES.INVALID_CREDENTIALS]: 'Invalid email or password',
+  [ERROR_CODES.ACCOUNT_INACTIVE]: 'Your account is inactive. Please contact support',
+  [ERROR_CODES.EMAIL_NOT_VERIFIED]: 'Please verify your email address to continue',
+  
+  [ERROR_CODES.AUTHORIZATION_ERROR]: 'You do not have permission to perform this action',
+  [ERROR_CODES.INSUFFICIENT_PERMISSIONS]: 'You do not have permission to perform this action',
+  [ERROR_CODES.FORBIDDEN]: 'Access to this resource is forbidden',
+  [ERROR_CODES.ADMIN_REQUIRED]: 'Admin access is required for this action',
+  
+  [ERROR_CODES.NOT_FOUND]: 'The requested resource was not found',
+  [ERROR_CODES.USER_NOT_FOUND]: 'User not found',
+  [ERROR_CODES.RESOURCE_NOT_FOUND]: 'The requested resource was not found',
+  [ERROR_CODES.ENDPOINT_NOT_FOUND]: 'The requested endpoint was not found',
+  
+  [ERROR_CODES.CONFLICT]: 'This action conflicts with existing data',
+  [ERROR_CODES.EMAIL_EXISTS]: 'An account with this email already exists',
+  [ERROR_CODES.RESOURCE_EXISTS]: 'This resource already exists',
+  [ERROR_CODES.DUPLICATE_ENTRY]: 'This entry already exists',
+  
+  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: 'Too many requests. Please try again later',
+  [ERROR_CODES.TOO_MANY_REQUESTS]: 'Too many requests. Please try again later',
+  [ERROR_CODES.LOGIN_ATTEMPTS_EXCEEDED]: 'Too many login attempts. Please try again later',
+  
+  [ERROR_CODES.EXTERNAL_SERVICE_ERROR]: 'A service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.EMAIL_SERVICE_ERROR]: 'Email service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.DATABASE_CONNECTION_ERROR]: 'Service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.API_SERVICE_ERROR]: 'Service is temporarily unavailable. Please try again later',
+  
+  [ERROR_CODES.DATABASE_ERROR]: 'Service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.QUERY_FAILED]: 'Service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.TRANSACTION_FAILED]: 'Service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.CONNECTION_POOL_ERROR]: 'Service is temporarily unavailable. Please try again later',
+  
+  [ERROR_CODES.NETWORK_ERROR]: 'Network error. Please check your connection and try again',
+  [ERROR_CODES.TIMEOUT]: 'Request timed out. Please try again',
+  [ERROR_CODES.CONNECTION_REFUSED]: 'Connection failed. Please try again later',
+  [ERROR_CODES.DNS_ERROR]: 'Network error. Please try again later',
+  
+  [ERROR_CODES.INTERNAL_ERROR]: 'An unexpected error occurred. Please try again later',
+  [ERROR_CODES.UNKNOWN_ERROR]: 'An unexpected error occurred. Please try again later',
+  [ERROR_CODES.CONFIGURATION_ERROR]: 'Service is temporarily unavailable. Please try again later',
+  [ERROR_CODES.SERVICE_UNAVAILABLE]: 'Service is temporarily unavailable. Please try again later',
+} as const;
+
+/**
+ * Get error category for a given error code
+ * 
+ * @param code - Error code
+ * @returns Error category
+ */
+export function getErrorCategory(code: string): string {
+  return ERROR_CODE_CATEGORIES[code as keyof typeof ERROR_CODE_CATEGORIES] || ERROR_CATEGORIES.INTERNAL;
+}
+
+/**
+ * Get error severity for a given error code
+ * 
+ * @param code - Error code
+ * @returns Error severity
+ */
+export function getErrorSeverity(code: string): string {
+  return ERROR_CODE_SEVERITY[code as keyof typeof ERROR_CODE_SEVERITY] || ERROR_SEVERITY.MEDIUM;
+}
+
+/**
+ * Get HTTP status code for a given error code
+ * 
+ * @param code - Error code
+ * @returns HTTP status code
+ */
+export function getErrorStatusCode(code: string): number {
+  return ERROR_STATUS_CODES[code as keyof typeof ERROR_STATUS_CODES] || 500;
+}
+
+/**
+ * Check if an error code is retryable
+ * 
+ * @param code - Error code
+ * @returns True if error is retryable
+ */
+export function isRetryableError(code: string): boolean {
+  return RETRYABLE_ERROR_CODES.includes(code as any);
+}
+
+/**
+ * Get user-friendly message for an error code
+ * 
+ * @param code - Error code
+ * @returns User-friendly message
+ */
+export function getUserFriendlyMessage(code: string): string {
+  return USER_FRIENDLY_MESSAGES[code as keyof typeof USER_FRIENDLY_MESSAGES] || 
+         USER_FRIENDLY_MESSAGES[ERROR_CODES.UNKNOWN_ERROR];
+}

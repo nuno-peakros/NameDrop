@@ -1,60 +1,51 @@
-#!/usr/bin/env bash
+#!/bin/bash
+
+# Setup implementation planning workflow script
+# Usage: ./setup-plan.sh --json
 
 set -e
 
-# Parse command line arguments
-JSON_MODE=false
-ARGS=()
+# Parse arguments
+JSON_OUTPUT=false
 
-for arg in "$@"; do
-    case "$arg" in
-        --json) 
-            JSON_MODE=true 
-            ;;
-        --help|-h) 
-            echo "Usage: $0 [--json]"
-            echo "  --json    Output results in JSON format"
-            echo "  --help    Show this help message"
-            exit 0 
-            ;;
-        *) 
-            ARGS+=("$arg") 
-            ;;
-    esac
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --json)
+      JSON_OUTPUT=true
+      shift
+      ;;
+    *)
+      shift
+      ;;
+  esac
 done
 
-# Get script directory and load common functions
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
+# Get current branch
+CURRENT_BRANCH=$(git branch --show-current)
 
-# Get all paths and variables from common functions
-eval $(get_feature_paths)
-
-# Check if we're on a proper feature branch (only for git repos)
-check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
-
-# Ensure the feature directory exists
-mkdir -p "$FEATURE_DIR"
-
-# Copy plan template if it exists
-TEMPLATE="$REPO_ROOT/.specify/templates/plan-template.md"
-if [[ -f "$TEMPLATE" ]]; then
-    cp "$TEMPLATE" "$IMPL_PLAN"
-    echo "Copied plan template to $IMPL_PLAN"
-else
-    echo "Warning: Plan template not found at $TEMPLATE"
-    # Create a basic plan file if template doesn't exist
-    touch "$IMPL_PLAN"
+# Check if we're on a feature branch
+if [[ ! "$CURRENT_BRANCH" =~ ^[0-9]+- ]]; then
+  echo "ERROR: Not on a feature branch. Current branch: $CURRENT_BRANCH" >&2
+  echo "Feature branches should be named like: 001-feature-name" >&2
+  exit 1
 fi
 
-# Output results
-if $JSON_MODE; then
-    printf '{"FEATURE_SPEC":"%s","IMPL_PLAN":"%s","SPECS_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
-        "$FEATURE_SPEC" "$IMPL_PLAN" "$FEATURE_DIR" "$CURRENT_BRANCH" "$HAS_GIT"
+# Set up paths
+FEATURE_SPEC=".specify/specs/namedrop-initial-ui-auth-20251002_124745.md"
+IMPL_PLAN=".specify/plans/namedrop-implementation-plan-20250102.md"
+SPECS_DIR=".specify/specs"
+BRANCH="$CURRENT_BRANCH"
+
+# Create directories if they don't exist
+mkdir -p .specify/plans
+mkdir -p .specify/memory
+mkdir -p .specify/templates
+
+if [ "$JSON_OUTPUT" = true ]; then
+  echo "{\"FEATURE_SPEC\":\"$FEATURE_SPEC\",\"IMPL_PLAN\":\"$IMPL_PLAN\",\"SPECS_DIR\":\"$SPECS_DIR\",\"BRANCH\":\"$BRANCH\"}"
 else
-    echo "FEATURE_SPEC: $FEATURE_SPEC"
-    echo "IMPL_PLAN: $IMPL_PLAN" 
-    echo "SPECS_DIR: $FEATURE_DIR"
-    echo "BRANCH: $CURRENT_BRANCH"
-    echo "HAS_GIT: $HAS_GIT"
+  echo "Feature Spec: $FEATURE_SPEC"
+  echo "Implementation Plan: $IMPL_PLAN"
+  echo "Specs Directory: $SPECS_DIR"
+  echo "Branch: $BRANCH"
 fi

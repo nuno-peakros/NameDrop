@@ -1,7 +1,9 @@
 import { db } from '@/lib/db'
 import { emailTemplates } from '@/lib/email'
 import { generateSecurePassword } from '@/lib/auth-utils'
-import { User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 
 /**
  * Email verification service for user account verification

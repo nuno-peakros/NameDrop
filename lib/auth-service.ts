@@ -2,7 +2,9 @@ import { db } from '@/lib/db'
 import { verifyPassword, shouldChangePassword } from '@/lib/auth-utils'
 import { generateToken, verifyToken, isTokenExpired } from '@/lib/jwt-utils'
 import { sendVerificationEmail } from '@/lib/email-verification'
-import { User, UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 
 /**
  * Authentication service for user login and session management

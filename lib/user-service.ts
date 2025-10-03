@@ -1,7 +1,9 @@
 import { db } from '@/lib/db'
 import { hashPassword, generateSecurePassword } from '@/lib/auth-utils'
 import { emailTemplates } from '@/lib/email'
-import { User, UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 
 /**
  * User service for user management operations

@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken'
 import { config } from '@/lib/config'
-import { User, UserRole } from '@prisma/client'
+import { Prisma, UserRole } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 
 /**
  * JWT token utilities for authentication and authorization

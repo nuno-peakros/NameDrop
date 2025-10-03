@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 
 // Define UserRole enum locally for testing
 enum UserRole {

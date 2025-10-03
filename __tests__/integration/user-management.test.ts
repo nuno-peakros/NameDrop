@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, beforeAll, afterAll, vi } from 'vitest'
-import { User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+
+type User = Prisma.UserGetPayload<Record<string, never>>
 import bcrypt from 'bcryptjs'
 
 // Mock the database

@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -165,7 +164,7 @@ function ChangePasswordForm({ onSuccess, redirectTo = '/dashboard', className }:
     <Card className={className}>
       <CardHeader className="space-y-2 text-center">
         <div className="flex justify-center mb-4">
-          <Image 
+          <img 
             src="/logo.svg" 
             alt="NameDrop Logo" 
             width={40} 

@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Users, Shield, BarChart3, Activity, Settings, Eye, TrendingUp } from 'lucide-react'
@@ -88,10 +89,13 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Link 
+              href="/dashboard/users"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 w-full"
+            >
               <Settings className="h-4 w-4 mr-2" />
               Manage Users
-            </Button>
+            </Link>
           </CardContent>
         </Card>
         
@@ -106,10 +110,13 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Link 
+              href="/dashboard/security"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 w-full"
+            >
               <Eye className="h-4 w-4 mr-2" />
               View Security
-            </Button>
+            </Link>
           </CardContent>
         </Card>
         
@@ -124,10 +131,13 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">
+            <Link 
+              href="/dashboard/performance"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 w-full"
+            >
               <TrendingUp className="h-4 w-4 mr-2" />
               View Analytics
-            </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

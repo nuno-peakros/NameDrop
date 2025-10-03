@@ -4,6 +4,9 @@ import { validateQueryParams, validateRequestBody, createValidationErrorResponse
 import { userSchemas } from '@/lib/validation'
 import { getSessionFromToken, isAdmin } from '@/lib/auth-service'
 
+// Use Node.js runtime instead of Edge runtime for crypto support
+export const runtime = 'nodejs'
+
 /**
  * GET /api/users
  * 
@@ -37,8 +40,73 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Extract and validate token
+    // Extract token
     const token = authHeader.substring(7) // Remove 'Bearer ' prefix
+    
+    // For demo purposes, check if it's a demo token
+    // Check if the token payload contains demo-admin-123
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]))
+      if (payload.id === 'demo-admin-123') {
+      // Demo mode - return mock data
+      const mockUsers = {
+        users: [
+          {
+            id: 'demo-admin-123',
+            firstName: 'Demo',
+            lastName: 'Administrator',
+            email: 'admin@namedrop.com',
+            role: 'admin',
+            isActive: true,
+            emailVerified: true,
+            createdAt: new Date().toISOString(),
+            lastLoginAt: new Date().toISOString(),
+          },
+          {
+            id: 'demo-user-456',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            role: 'user',
+            isActive: true,
+            emailVerified: true,
+            createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
+            lastLoginAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
+          },
+          {
+            id: 'demo-user-789',
+            firstName: 'Jane',
+            lastName: 'Smith',
+            email: 'jane@example.com',
+            role: 'user',
+            isActive: false,
+            emailVerified: false,
+            createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
+            lastLoginAt: null,
+          },
+        ],
+        pagination: {
+          page: 1,
+          limit: 20,
+          total: 3,
+          totalPages: 1,
+        },
+      }
+      
+      return NextResponse.json(
+        {
+          success: true,
+          data: mockUsers,
+          message: 'Demo users retrieved successfully',
+        },
+        { status: 200 }
+      )
+      }
+    } catch (error) {
+      // If token parsing fails, continue to regular validation
+    }
+    
+    // Regular token validation for production
     const session = await getSessionFromToken(token)
     
     if (!session) {

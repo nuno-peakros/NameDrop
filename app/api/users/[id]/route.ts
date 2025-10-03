@@ -4,6 +4,9 @@ import { validatePathParams, validateRequestBody, createValidationErrorResponse 
 import { userSchemas } from '@/lib/validation'
 import { getSessionFromToken, isAdmin } from '@/lib/auth-service'
 
+// Use Node.js runtime instead of Edge runtime for crypto support
+export const runtime = 'nodejs'
+
 /**
  * GET /api/users/[id]
  * 

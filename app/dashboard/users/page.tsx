@@ -1,13 +1,6 @@
-import { Metadata } from 'next'
-import { UserManagement } from '@/components/dashboard/user-management'
+'use client'
 
-/**
- * Users page metadata
- */
-export const metadata: Metadata = {
-  title: 'Users | NameDrop Dashboard',
-  description: 'Manage user accounts, roles, and permissions',
-}
+import { UserManagement } from '@/components/dashboard/user-management'
 
 /**
  * Users management page component

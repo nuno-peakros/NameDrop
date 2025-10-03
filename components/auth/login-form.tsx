@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Image from 'next/image'
+import { ClientOnly } from '@/components/client-only'
 // import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -73,6 +74,7 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
       setIsLoading(true)
       setError(null)
 
+      // Regular authentication
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -111,7 +113,8 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
   }
 
   return (
-    <Card className={className}>
+    <ClientOnly>
+      <Card className={className}>
       <CardHeader className="space-y-2 text-center">
         <div className="flex justify-center mb-4">
           <Image
@@ -120,6 +123,8 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
             width={300}
             height={300}
             className="text-primary"
+            priority
+            unoptimized
           />
         </div>
         <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
@@ -195,7 +200,8 @@ function LoginForm({ onSuccess, redirectTo = '/dashboard', className }: LoginFor
           </p>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </ClientOnly>
   )
 }
 

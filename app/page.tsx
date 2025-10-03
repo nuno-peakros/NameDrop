@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { ClientOnly } from "@/components/client-only"
 
 /**
  * NameDrop Internal Landing Page
@@ -13,42 +14,46 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
  */
 export default function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
-      <div className="w-full max-w-md">
-        <Card>
-          <CardHeader className="text-center space-y-4">
-            <div className="flex justify-center mb-4">
-              <Image
-                src="/logo.svg"
-                alt="NameDrop Logo"
-                width={300}
-                height={300}
-                className="text-primary"
-              />
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center space-y-2">
-              <h2 className="text-lg font-semibold">Welcome</h2>
-              <p className="text-sm text-muted-foreground">
-                Sign in to access the NameDrop application
-              </p>
-            </div>
-            
-            <div className="space-y-4">
-              <Link href="/login" className="w-full">
-                <Button className="w-full">
-                  Sign In
-                </Button>
-              </Link>
-            </div>
-            
-            <div className="text-center text-xs text-muted-foreground">
-              <p>This is a Peakros Internal Application. If you require access contact support@peakros.com</p>
-            </div>
-          </CardContent>
-        </Card>
+    <ClientOnly>
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <div className="w-full max-w-md">
+          <Card>
+            <CardHeader className="text-center space-y-4">
+              <div className="flex justify-center mb-4">
+                <Image
+                  src="/logo.svg"
+                  alt="NameDrop Logo"
+                  width={300}
+                  height={300}
+                  className="text-primary"
+                  priority
+                  unoptimized
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center space-y-2">
+                <h2 className="text-lg font-semibold">Welcome</h2>
+                <p className="text-sm text-muted-foreground">
+                  Sign in to access the NameDrop application
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <Link href="/login" className="w-full">
+                  <Button className="w-full">
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+              
+              <div className="text-center text-xs text-muted-foreground">
+                <p>This is a Peakros Internal Application. If you require access contact support@peakros.com</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </ClientOnly>
   )
 }

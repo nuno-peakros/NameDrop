@@ -17,6 +17,22 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# Accept build arguments for environment variables
+ARG NEXTAUTH_SECRET
+ARG NEXTAUTH_URL
+ARG JWT_SECRET
+ARG DATABASE_URL
+ARG RESEND_API_KEY
+ARG NODE_ENV=production
+
+# Set environment variables for build
+ENV NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+ENV NEXTAUTH_URL=$NEXTAUTH_URL
+ENV JWT_SECRET=$JWT_SECRET
+ENV DATABASE_URL=$DATABASE_URL
+ENV RESEND_API_KEY=$RESEND_API_KEY
+ENV NODE_ENV=$NODE_ENV
+
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
 # Uncomment the following line in case you want to disable telemetry during the build.

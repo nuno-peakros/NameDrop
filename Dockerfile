@@ -38,6 +38,10 @@ ENV NODE_ENV=$NODE_ENV
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build the application
 RUN npm run build
 
 # Production image, copy all the files and run next

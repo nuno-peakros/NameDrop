@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
         { status: 200 }
       )
       }
-    } catch (error) {
+    } catch {
       // If token parsing fails, continue to regular validation
     }
     

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 // Use Node.js runtime instead of Edge runtime
 export const runtime = 'nodejs'
@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
  * Demo users endpoint that returns mock data without authentication
  * for testing purposes
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Mock users data
     const mockUsers = {

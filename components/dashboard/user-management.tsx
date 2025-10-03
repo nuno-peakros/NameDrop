@@ -100,7 +100,27 @@ function UserManagement({ className }: UserManagementProps) {
    * Fetch users with search and filters
    */
   // Simple state management with direct fetch
-  const [usersData, setUsersData] = React.useState<any>(null)
+  const [usersData, setUsersData] = React.useState<{
+    users: Array<{
+      id: string
+      firstName: string
+      lastName: string
+      email: string
+      role: string
+      isActive: boolean
+      emailVerified: boolean
+      createdAt: string
+      updatedAt: string
+    }>
+    pagination: {
+      page: number
+      limit: number
+      total: number
+      totalPages: number
+      hasNext: boolean
+      hasPrev: boolean
+    }
+  } | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
   const [error, setError] = React.useState<Error | null>(null)
 

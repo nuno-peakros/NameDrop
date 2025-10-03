@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { applyRateLimit, getRateLimitConfigs } from '@/lib/rate-limit'
-import { validateToken } from '@/lib/jwt-utils'
 
 /**
  * Next.js middleware for request processing
@@ -27,22 +26,6 @@ function isApiRoute(pathname: string): boolean {
   return pathname.startsWith('/api/')
 }
 
-/**
- * Check if a path is a protected route
- * 
- * @param pathname - Request pathname
- * @returns True if path requires authentication
- */
-function isProtectedRoute(pathname: string): boolean {
-  const protectedRoutes = [
-    '/api/users',
-    '/api/users/me',
-    '/api/auth/change-password',
-    '/api/auth/logout',
-  ]
-  
-  return protectedRoutes.some(route => pathname.startsWith(route))
-}
 
 /**
  * Check if a path is a public route
@@ -90,23 +73,6 @@ function getRateLimitConfigForPath(pathname: string) {
   return null
 }
 
-/**
- * Extract token from Authorization header
- * 
- * @param request - Next.js request
- * @returns JWT token or null
- */
-function extractToken(request: NextRequest): string | null {
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader) return null
-  
-  const parts = authHeader.split(' ')
-  if (parts.length !== 2 || parts[0] !== 'Bearer') {
-    return null
-  }
-  
-  return parts[1]
-}
 
 /**
  * Create CORS headers
@@ -148,69 +114,6 @@ function handleOptionsRequest(request: NextRequest): NextResponse {
   })
 }
 
-/**
- * Handle authentication for protected routes
- * 
- * @param request - Next.js request
- * @returns Authentication response or null if allowed
- */
-async function handleAuthentication(request: NextRequest): Promise<NextResponse | null> {
-  const token = extractToken(request)
-  
-  if (!token) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Authorization token required',
-        },
-      },
-      { status: 401 }
-    )
-  }
-  
-  try {
-    const validation = await validateToken(token)
-    
-    if (!validation.isValid) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'INVALID_TOKEN',
-            message: validation.error || 'Invalid token',
-          },
-        },
-        { status: 401 }
-      )
-    }
-    
-    // Add user information to request headers for API routes
-    const requestHeaders = new Headers(request.headers)
-    requestHeaders.set('x-user-id', validation.user!.userId)
-    requestHeaders.set('x-user-email', validation.user!.email)
-    requestHeaders.set('x-user-role', validation.user!.role)
-    
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    })
-  } catch (error) {
-    console.error('Authentication error:', error)
-    return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'AUTHENTICATION_FAILED',
-          message: 'Authentication failed',
-        },
-      },
-      { status: 401 }
-    )
-  }
-}
 
 /**
  * Main middleware function

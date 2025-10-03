@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Edit, X } from 'lucide-react'
+import { Edit } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'

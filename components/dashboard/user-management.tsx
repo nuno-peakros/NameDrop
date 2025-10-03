@@ -59,6 +59,20 @@ interface User {
   passwordChangedAt?: string
 }
 
+interface ApiUser {
+  id: string
+  firstName: string
+  lastName: string
+  email: string
+  role: string
+  isActive: boolean
+  emailVerified: boolean
+  createdAt: string
+  updatedAt: string
+  lastLoginAt?: string
+  passwordChangedAt?: string
+}
+
 /**
  * User management component with full CRUD operations
  * 
@@ -89,10 +103,10 @@ function UserManagement({ className }: UserManagementProps) {
   const [filters, setFilters] = React.useState<Record<string, string | boolean | undefined>>({})
   const [selectedUsers, setSelectedUsers] = React.useState<string[]>([])
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
-  const [userToDelete, setUserToDelete] = React.useState<User | null>(null)
+  const [userToDelete, setUserToDelete] = React.useState<ApiUser | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
   const [editDialogOpen, setEditDialogOpen] = React.useState(false)
-  const [userToEdit, setUserToEdit] = React.useState<User | null>(null)
+  const [userToEdit, setUserToEdit] = React.useState<ApiUser | null>(null)
   const [page, setPage] = React.useState(1)
   const [limit] = React.useState(20)
 
@@ -292,7 +306,7 @@ function UserManagement({ className }: UserManagementProps) {
    */
   const handleSelectAll = (selected: boolean) => {
     if (selected) {
-      setSelectedUsers(usersData?.data?.users?.map((user: User) => user.id) || [])
+      setSelectedUsers(usersData?.users?.map((user) => user.id) || [])
     } else {
       setSelectedUsers([])
     }
@@ -303,7 +317,7 @@ function UserManagement({ className }: UserManagementProps) {
    * 
    * @param user - User to delete
    */
-  const handleDeleteUser = (user: User) => {
+  const handleDeleteUser = (user: ApiUser) => {
     setUserToDelete(user)
     setDeleteDialogOpen(true)
   }
@@ -320,7 +334,7 @@ function UserManagement({ className }: UserManagementProps) {
    * 
    * @param user - User to edit
    */
-  const handleEditUser = (user: User) => {
+  const handleEditUser = (user: ApiUser) => {
     setUserToEdit(user)
     setEditDialogOpen(true)
   }
@@ -339,7 +353,7 @@ function UserManagement({ className }: UserManagementProps) {
    * 
    * @param user - User to toggle
    */
-  const handleToggleUserStatus = (user: User) => {
+  const handleToggleUserStatus = (user: ApiUser) => {
     toggleUserStatusMutation.mutate({
       userId: user.id,
       isActive: !user.isActive
@@ -351,7 +365,7 @@ function UserManagement({ className }: UserManagementProps) {
    * 
    * @param user - User to resend verification for
    */
-  const handleResendVerification = (user: User) => {
+  const handleResendVerification = (user: ApiUser) => {
     resendVerificationMutation.mutate(user.id)
   }
 
@@ -361,7 +375,7 @@ function UserManagement({ className }: UserManagementProps) {
    * @param user - User object
    * @returns Status badge component
    */
-  const getUserStatusBadge = (user: User) => {
+  const getUserStatusBadge = (user: ApiUser) => {
     if (!user.isActive) {
       return (
         <Badge variant="destructive" className="flex items-center gap-1">
@@ -420,8 +434,8 @@ function UserManagement({ className }: UserManagementProps) {
     })
   }
 
-  const users = usersData?.data?.users || []
-  const totalUsers = usersData?.data?.pagination?.total || 0
+  const users = usersData?.users || []
+  const totalUsers = usersData?.pagination?.total || 0
   const totalPages = Math.ceil(totalUsers / limit)
 
   if (error) {
@@ -555,7 +569,7 @@ function UserManagement({ className }: UserManagementProps) {
               </div>
 
               {/* Table Rows */}
-              {users.map((user: User) => (
+              {users.map((user: ApiUser) => (
                 <div
                   key={user.id}
                   className="grid grid-cols-12 gap-4 items-center py-3 hover:bg-muted/50 rounded-lg transition-colors"

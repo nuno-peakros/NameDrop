@@ -22,15 +22,16 @@ import { RoleChangeConfirmation } from '@/components/dashboard/role-change-confi
 /**
  * User interface
  */
-interface User {
+interface ApiUser {
   id: string
   firstName: string
   lastName: string
   email: string
-  role: 'admin' | 'user'
+  role: string
   isActive: boolean
   emailVerified: boolean
   createdAt: string
+  updatedAt: string
   lastLoginAt?: string
   passwordChangedAt?: string
 }
@@ -72,7 +73,7 @@ interface EditUserFormData {
  */
 interface UserEditFormProps {
   /** User to edit */
-  user: User | null
+  user: ApiUser | null
   /** Whether the dialog is open */
   open: boolean
   /** Callback when dialog open state changes */
@@ -102,10 +103,10 @@ export function UserEditForm({ user, open, onOpenChange }: UserEditFormProps) {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        role: user.role,
+        role: user.role as 'user' | 'admin',
         isActive: user.isActive
       })
-      setOriginalRole(user.role)
+      setOriginalRole(user.role as 'user' | 'admin')
       setErrors({})
     }
   }, [user])

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import jwt from 'jsonwebtoken'
-import { Prisma } from '@prisma/client'
+import { $Enums } from '@prisma/client'
 
-type UserRole = Prisma.UserRole
+type UserRole = $Enums.UserRole
 import {
   generateToken,
   generateShortToken,
